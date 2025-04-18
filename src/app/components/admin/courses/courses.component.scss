@@ -1,0 +1,41 @@
+
+
+th
+{
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 600;
+    font-size: 13px;}
+
+tr{
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 400;
+    font-size: 13px;}
+
+    .description-popup {
+        position: absolute;
+        z-index: 9999;
+        background: white;
+        border-radius: 6px;
+        width: 450px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+        // Arrow
+        &::before {
+          content: "";
+          position: absolute;
+          top: -10px; // position above the popup
+          left: 20px; // adjust to align with button click
+          border-width: 10px;
+          border-style: solid;
+          border-color: transparent transparent white transparent;
+        }
+      }
+
+      .btn-close {
+        border: none;
+        background: transparent;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+

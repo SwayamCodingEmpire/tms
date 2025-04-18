@@ -1,0 +1,85 @@
+<nav class="navbar navbar-expand-lg navbar-dark px-3" style="background: #2e3c54;">
+  <!-- Logo & Name -->
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <img src="https://www.cozentus.com/assets/images/footer-logo.webp" alt="Logo" height="25" class="me-2">
+  </a>
+
+  <!-- User Profile Dropdown (Right Side) -->
+  <div class="ms-auto dropdown">
+    <button class="btn dropdown-toggle d-flex align-items-center dropdown-toggle-white" type="button" id="userDropdown"
+            (click)="toggleDropdown()">
+      <span class="rounded-circle d-inline-flex justify-content-center align-items-center me-2"
+            style="width: 36px; height: 36px; background-color: #e83e8c; color: white; font-weight: bold;">
+        SPM
+      </span>
+      <span class="text-white">Swayam Mohanty</span>
+    </button>
+
+    <ul #dropdownMenu class="dropdown-menu dropdown-menu-end border-0 shadow-lg"
+        [class.show]="isDropdownOpen"
+        style="background: #303c5c;">
+      <li>
+        <a class="dropdown-item text-white d-flex align-items-center" href="javascript:void(0)" (click)="changePassword()" style="transition: color 0.2s ease-in-out; --bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
+
+          <i class="fa-thin fa-key me-2"></i> Change Password
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item text-white d-flex align-items-center" href="javascript:void(0)" (click)="signOut()" style="transition: color 0.2s ease-in-out; --bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
+          <i class="fa-thin fa-power-off me-2"></i> Sign Out
+        </a>
+      </li>
+    </ul>
+</div>
+
+
+</nav>
+
+<div style="background: #2c3a52; padding:5px">
+  <ul class="nav nav-pills px-3" style="border-radius: 5px; padding: 3px; margin-bottom: 0;">
+    <!-- Courses Dropdown -->
+    <li class="nav-item dropdown">
+      <a class="nav-link text-white bg-white bg-opacity-25 px-3 py-2 rounded dropdown-toggle"
+         href="#" id="coursesDropdown" role="button"
+         (click)="toggleCoursesDropdown(); $event.preventDefault()">
+        <i class="fa-regular fa-file me-2"></i> Courses
+      </a>
+
+      <ul class="dropdown-menu border-0 shadow"
+          [class.show]="isCoursesDropdownOpen"
+          aria-labelledby="coursesDropdown"
+          style="background-color: #303c5c;">
+        <li>
+          <a class="dropdown-item text-white d-flex align-items-center" href="#"
+             style="--bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
+            <i class="fa-regular fa-file me-2"></i> Courses
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item text-white d-flex align-items-center" href="#"
+             style="--bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
+            <i class="fa-light fa-square-list me-2"></i> Programs
+          </a>
+        </li>
+      </ul>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link text-light">
+        <i class="fa-regular fa-user-group me-1"></i> Batch
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-light">
+        <i class="fa-regular fa-user me-1"></i> Teachers
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-light">
+        <i class="far fa-user-graduate me-1"></i> Students
+      </a>
+    </li>
+  </ul>
+</div>
+

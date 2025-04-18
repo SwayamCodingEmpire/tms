@@ -1,0 +1,182 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "user": "swayam",
+      "password": "password",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "user": "teacher1",
+      "password": "pass123",
+      "role": "teacher"
+    }
+  ],
+  "courses": [
+    {
+      "code": "3K2128",
+      "name": "Dashboards",
+      "theoryTime": "3 hrs",
+      "practiceTime": "3 hrs",
+      "description": "Building dynamic dashboards...",
+      "topicsString": "Analytics, Data Visualization, Dashboards",
+      "topics": [
+        "Analytics",
+        "Data Visualization",
+        "Dashboards"
+      ],
+      "id": "c454"
+    },
+    {
+      "code": "1J2124",
+      "name": "Machine Learning",
+      "theoryTime": "4 hrs",
+      "practiceTime": "4 hrs",
+      "description": "Machine Learning fundamentals...",
+      "topicsString": "Machine Learning, Big Data, Business Acumen",
+      "topics": [
+        "Machine Learning",
+        "Big Data",
+        "Business Acumen"
+      ],
+      "id": "44e8"
+    },
+    {
+      "code": "3P2130",
+      "name": "Blockchain Basics",
+      "theoryTime": "4 hrs",
+      "practiceTime": "4 hrs",
+      "description": "Understanding blockchain technology...",
+      "topics": [
+        "Bitcoin",
+        "Ethereum",
+        "Smart Contracts"
+      ],
+      "id": "e890"
+    },
+    {
+      "code": "1Q2131",
+      "name": "Cloud Computing",
+      "theoryTime": "6 hrs",
+      "practiceTime": "6 hrs",
+      "description": "Cloud services and architecture...",
+      "topics": [
+        "AWS",
+        "Azure",
+        "Google Cloud"
+      ],
+      "id": "726b"
+    },
+    {
+      "code": "2R2132",
+      "name": "Cyber Security",
+      "theoryTime": "5 hrs",
+      "practiceTime": "5 hrs",
+      "description": "Cybersecurity principles and practices...",
+      "topics": [
+        "Network Security",
+        "Ethical Hacking",
+        "Cryptography"
+      ],
+      "id": "b7a8"
+    },
+    {
+      "code": "3S2133",
+      "name": "AI and Deep Learning",
+      "theoryTime": "7 hrs",
+      "practiceTime": "7 hrs",
+      "description": "Artificial Intelligence and Deep Learning...",
+      "topics": [
+        "Neural Networks",
+        "CNN",
+        "NLP"
+      ],
+      "id": "0fae",
+      "topicsString": "Neural Networks, CNN, NLP"
+    },
+    {
+      "code": "1T2134",
+      "name": "DevOps",
+      "theoryTime": "6 hrs",
+      "practiceTime": "6 hrs",
+      "description": "DevOps principles and CI/CD pipelines...",
+      "topics": [
+        "Docker",
+        "Kubernetes",
+        "Jenkins"
+      ],
+      "id": "e79e"
+    },
+    {
+      "code": "2U2135",
+      "name": "Software Engineering",
+      "theoryTime": "5 hrs",
+      "practiceTime": "5 hrs",
+      "description": "Software development lifecycle...",
+      "topics": [
+        "Agile",
+        "Scrum",
+        "Software Testing"
+      ],
+      "id": "b19d"
+    },
+    {
+      "code": "3V2136",
+      "name": "Web Development",
+      "theoryTime": "5 hrs",
+      "practiceTime": "5 hrs",
+      "description": "Full-stack web development...",
+      "topics": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "React"
+      ],
+      "id": "fd6b"
+    },
+    {
+      "code": "1W2137",
+      "name": "Big Data Analytics",
+      "theoryTime": "6 hrs",
+      "practiceTime": "6 hrs",
+      "description": "Processing and analyzing big data...",
+      "topics": [
+        "Hadoop",
+        "Spark",
+        "Kafka"
+      ],
+      "id": "82d2"
+    },
+    {
+      "id": "f7d8",
+      "code": "00000",
+      "name": "TEST",
+      "theoryTime": "11 hr",
+      "practiceTime": "11 hr",
+      "description": "This is a test description",
+      "topicsString": "",
+      "topics": []
+    },
+    {
+      "id": "0e7b",
+      "code": "likun",
+      "name": "likun",
+      "theoryTime": "100 hrs",
+      "practiceTime": "100 hrs",
+      "description": "THis is likun test description",
+      "topicsString": "",
+      "topics": []
+    },
+    {
+      "id": "a478",
+      "code": "sway",
+      "name": "swayam",
+      "theoryTime": "100 hrs",
+      "practiceTime": "100 hrs",
+      "description": "Buildin\ng dynamic dashboards...",
+      "topicsString": "",
+      "topics": []
+    }
+  ]
+}

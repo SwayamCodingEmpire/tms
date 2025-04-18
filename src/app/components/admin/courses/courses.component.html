@@ -1,0 +1,562 @@
+<app-navbar></app-navbar>
+<div
+  class="container-fluid px-5"
+  style="background-color: #e9f3f9; min-height: 88vh"
+>
+  <div class="row mb-3 align-items-center">
+    <div class="col">
+      <label class="mt-3">Programs</label>
+    </div>
+    <div class="col" style="display: flex; justify-content: flex-end">
+      <button
+        style="
+          border: none;
+          background-color: #ffffff;
+          box-shadow: black;
+          border-radius: 5px;
+          width: 35px;
+        "
+        class="mt-3"
+        (click)="resetTable()"
+      >
+        <i
+          class="fa-solid fa-rotate-right mt-2 mb-2"
+          style="color: #2f72f4; font: 20px"
+        ></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm p-3" style="box-shadow: black; border: none">
+    <div class="card-body">
+      <div class="mb-3 d-flex align-items-center justify-content-between">
+        <!-- Search Field with FormGroup -->
+        <form [formGroup]="searchForm">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            style="width: 280px"
+            formControlName="searchTerm"
+          />
+        </form>
+
+        <button
+          class="btn"
+          [disabled]="isAddingNewCourse"
+          style="
+            border-radius: 5px;
+            border-color: #000000;
+            width: 150px;
+            justify-content: right;
+          "
+          (click)="addRow()"
+        >
+          Add Course
+        </button>
+      </div>
+
+      <div
+        *ngIf="!courses.length"
+        class="d-flex justify-content-start align-items-center"
+        style="
+          height: 40px;
+          background-color: #f8fbff;
+          border-radius: 5px;
+          border: none;
+        "
+      >
+        <span class="px-3 fw-semibold text-dark"
+          >Please add a course to see content</span
+        >
+      </div>
+
+      <div class="table-responsive mt-2">
+        <table class="table table-borderless table-responsive">
+          <thead>
+            <tr>
+              <th style="background: #f8fbff">Actions</th>
+              <th style="background: #f8fbff; text-align: center">
+                <div class="d-flex flex-row align-items-center">
+                  Code
+                  <div
+                    class="d-flex flex-column align-items-center ms-2"
+                    style="font-size: x-small"
+                  >
+                    <i
+                      class="fas fa-chevron-up"
+                      (click)="sortTable('code', true)"
+                      [style.color]="
+                        sortedColumn === 'code' && isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-chevron-down"
+                      (click)="sortTable('code', false)"
+                      [style.color]="
+                        sortedColumn === 'code' && !isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                  </div>
+                </div>
+              </th>
+
+              <th style="background: #f8fbff; text-align: center">
+                <div class="d-flex flex-row align-items-center">
+                  Course Name
+                  <div
+                    class="d-flex flex-column align-items-center ms-2"
+                    style="font-size: x-small"
+                  >
+                    <i
+                      class="fas fa-chevron-up"
+                      (click)="sortTable('name', true)"
+                      [style.color]="
+                        sortedColumn === 'name' && isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-chevron-down"
+                      (click)="sortTable('name', false)"
+                      [style.color]="
+                        sortedColumn === 'name' && !isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                  </div>
+                  <i class="fa-light fa-filter ms-3"></i>
+                </div>
+              </th>
+
+              <th style="background: #f8fbff">Theory Time</th>
+              <th style="background: #f8fbff">Practice Time</th>
+              <th style="background: #f8fbff">Description</th>
+              <th style="background: #f8fbff">Topics</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let course of courses
+                  | paginate
+                    : { itemsPerPage: pageSize, currentPage: currentPage };
+                let i = index
+              "
+            >
+              <!-- Actions (Edit & Delete) -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+              >
+                <button
+                  (click)="editCourse(i + pageSize * (currentPage - 1))"
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  style="background-color: transparent; border: none"
+                  [disabled]="isAddingNewCourse"
+                >
+                  <i class="fa-regular fa-pencil"></i>
+                </button>
+                <button
+                  (click)="deleteCourse(i + pageSize * (currentPage - 1))"
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  style="background-color: transparent; border: none"
+                >
+                  <i class="fa-regular fa-trash"></i>
+                </button>
+
+                <!-- Save & Cancel Buttons in Edit Mode -->
+                <button
+                  (click)="saveCourse(i + pageSize * (currentPage - 1))"
+                  (click)="closeDescriptionPopup()"
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                  style="background-color: transparent; border: none"
+                >
+                  <i class="fa-regular fa-check"></i>
+                </button>
+                <button
+                  (click)="cancelEdit()"
+                  (click)="closeDescriptionPopup()"
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                  style="background-color: transparent; border: none"
+                >
+                  <i class="fa-regular fa-xmark"></i>
+                </button>
+              </td>
+
+              <!-- Code Column -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+                style="
+                  color: #2f72f4;
+                  text-decoration: underline;
+                  max-width: 70px;
+                "
+              >
+                <a
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  [attr.title]="'Click to view or add topic'"
+                  class="text-primary"
+                  href="#"
+                  style="cursor: pointer; margin-left: 4px"
+                >
+                  {{ course.code }}
+                </a>
+
+                <form
+                  [formGroup]="courseForm"
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                >
+                  <input
+                    type="text"
+                    formControlName="code"
+                    class="form-control"
+                    style="height: 25px; font-size: inherit; border-radius: 0"
+                    placeholder="Enter Code"
+                  />
+                </form>
+              </td>
+
+              <!-- Course Name -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+                style="max-width: 100px"
+              >
+                <span
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  >{{ course.name }}</span
+                >
+                <form
+                  [formGroup]="courseForm"
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                >
+                  <input
+                    type="text"
+                    formControlName="name"
+                    class="form-control"
+                    style="height: 25px; font-size: inherit; border-radius: 0"
+                    placeholder="Enter Course Name"
+                  />
+                </form>
+              </td>
+
+              <!-- Theory Time -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+                style="max-width: 50px"
+              >
+                <span
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  >{{ course.theoryTime }}</span
+                >
+                <form
+                  [formGroup]="courseForm"
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                >
+                  <input
+                    type="text"
+                    formControlName="theoryTime"
+                    class="form-control"
+                    style="height: 25px; font-size: inherit; border-radius: 0"
+                    placeholder="0 hr"
+                  />
+                </form>
+              </td>
+
+              <!-- Practice Time -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+                style="max-width: 40px"
+              >
+                <span
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  >{{ course.practiceTime }}</span
+                >
+                <form
+                  [formGroup]="courseForm"
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                >
+                  <input
+                    type="text"
+                    formControlName="practiceTime"
+                    class="form-control"
+                    style="height: 25px; font-size: inherit; border-radius: 0"
+                    placeholder="0 hr"
+                  />
+                </form>
+              </td>
+
+              <!-- Description -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+                style="
+                  max-width: 50px;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  color: #2f72f4;
+                  text-decoration: underline;
+                  overflow: hidden;
+                  cursor: pointer;
+                "
+              >
+                <span
+                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  [attr.title]="course.description"
+                  >{{ course.description }}</span
+                >
+                <button
+                  *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
+                  class="btn btn-link border-0 p-0 m-0"
+                  (click)="openDescriptionPopup($event, course)"
+                  style="
+                    font-size: small;
+                    cursor: pointer;
+                    max-width: 129px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    display: inline-block;
+                    vertical-align: middle;
+                  "
+                >
+                  {{
+                    courseForm.get("description")?.value.length == 0
+                      ? "Add Description"
+                      : courseForm.get("description")?.value
+                  }}
+                </button>
+              </td>
+
+              <!-- Topics Column with Tooltip -->
+              <td
+                [ngStyle]="{
+                  background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                }"
+                style="width: 450px"
+              >
+                <span *ngIf="editingIndex !== i + pageSize * (currentPage - 1)">
+                  <!-- First two topics -->
+                  <span
+                    *ngFor="
+                      let topic of course.topics.slice(0, 2);
+                      let last = last
+                    "
+                  >
+                    {{ topic }}{{ last ? "" : ", " }}
+                  </span>
+
+                  <!-- "+ N more" with Bootstrap Tooltip -->
+                  <span
+                    *ngIf="course.topics.length > 2"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    [attr.title]="getRemainingTopics(course.topics)"
+                    class="text-primary"
+                    style="cursor: pointer; margin-left: 4px hover"
+                  >
+                    + {{ course.topics.length - 2 }} more
+                  </span>
+                </span>
+
+                <!-- Editable Topics Input -->
+                <span *ngIf="editingIndex === i + pageSize * (currentPage - 1)">
+                  <span
+                    *ngFor="
+                      let topic of course.topics.slice(0, 2);
+                      let last = last
+                    "
+                  >
+                    {{ topic }}{{ last ? "" : ", " }}
+                  </span>
+
+                  <span>| </span
+                  ><a
+                    class="border-0 p-0 m-0"
+                    style="
+                      color: #2f72f4;
+                      text-decoration: underline;
+                      cursor: pointer;
+                    "
+                  >
+                    {{
+                      courseForm.get("topicsString")?.value.length == 0
+                        ? "Add Topics"
+                        : "Edit"
+                    }}
+                  </a>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="d-flex justify-content-end align-items-center w-100 custom-font"
+      >
+        <span class="me-3">
+          Showing {{ (currentPage - 1) * pageSize + 1 }} to
+          {{
+            currentPage * pageSize > courses.length
+              ? courses.length
+              : currentPage * pageSize
+          }}
+          of {{ courses.length }} entries
+        </span>
+
+        <pagination-controls
+          (pageChange)="currentPage = $event"
+          class="align-items-center mt-3"
+        ></pagination-controls>
+
+        <form [formGroup]="pageSizeForm" class="d-flex align-items-center ms-2">
+          <input
+            type="number"
+            class="form-control"
+            style="width: 60px; height: 23px"
+            formControlName="pageSize"
+            min="1"
+            [max]="courses.length"
+          />
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+
+<!-- Description Modal -->
+<!-- Description Modal -->
+<div
+  class="description-popup shadow-sm p-3"
+  *ngIf="isDescriptionPopupOpen"
+  [style.top.px]="popupPosition.top"
+  [style.left.px]="popupPosition.left"
+>
+  <div class="d-flex justify-content-between align-items-center">
+    <h6 class="mb-2">Description</h6>
+    <button class="btn-close" (click)="closeDescriptionPopup()"></button>
+  </div>
+  <form [formGroup]="descriptionForm">
+    <textarea
+      class="form-control"
+      rows="3"
+      formControlName="description"
+      maxlength="40"
+    ></textarea>
+    <div
+      *ngIf="
+        descriptionForm.get('description')?.invalid &&
+        descriptionForm.get('description')?.touched
+      "
+      class="text-danger small"
+    >
+      <div *ngIf="descriptionForm.get('description')?.errors?.['required']">
+        Description is required.
+      </div>
+      <div *ngIf="descriptionForm.get('description')?.errors?.['maxlength']">
+        Description cannot exceed 40 characters.
+      </div>
+    </div>
+  </form>
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <small class="text-muted">{{ descriptionForm.get("description")?.value.length }}/40</small>
+    <div>
+      <button
+        class="btn btn-primary me-2"
+        style="min-width: 100px;"
+        (click)="saveDescription(); closeDescriptionPopup()"
+        [disabled]="descriptionForm.invalid"
+      >
+        Save
+      </button>
+      <button
+        class="btn btn-outline-secondary"
+        style="min-width: 100px;"
+        (click)="closeDescriptionPopup()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Delete Confirmation Modal -->
+<div
+  class="modal fade"
+  id="deleteConfirmationModal"
+  tabindex="-1"
+  aria-labelledby="deleteConfirmationModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div
+        class="modal-header flex-column align-items-start pb-0"
+        style="border-bottom: none"
+      >
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">
+          Delete Course
+        </h5>
+        <hr class="modal-title-line w-100 m-0 mt-3" />
+        <button
+          type="button"
+          class="btn-close position-absolute end-0 top-0 m-3"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        >
+          <i class="fa-solid fa-xmark-large"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure that you want to delete course
+          <span id="courseCodeToDelete"></span>?
+        </p>
+      </div>
+      <div class="modal-footer justify-content-end border-0 pt-0">
+        <button
+          type="button"
+          class="btn btn-primary px-4"
+          id="confirmDeleteBtn"
+          style="
+            background-color: #2962ff;
+            border-radius: 6px;
+            font-weight: 500;
+          "
+        >
+          Yes
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4 ms-2"
+          data-bs-dismiss="modal"
+          style="border-radius: 6px; font-weight: 500"
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
