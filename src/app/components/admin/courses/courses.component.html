@@ -208,7 +208,7 @@
                   data-bs-placement="bottom"
                   [attr.title]="'Click to view or add topic'"
                   class="text-primary"
-                  href="#"
+                  [routerLink]="['/topics', course.code, course.name]"
                   style="cursor: pointer; margin-left: 4px"
                 >
                   {{ course.code }}

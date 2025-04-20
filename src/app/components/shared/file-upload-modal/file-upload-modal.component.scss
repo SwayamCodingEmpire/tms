@@ -1,0 +1,26 @@
+.upload-area {
+  border-style: dashed !important;
+  border-width: 2px !important;
+  border-radius: 5px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #f0f7ff !important;
+  }
+}
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.border-primary {
+  border-color: #2f72f4 !important;
+}
+
+.text-primary {
+  color: #2f72f4 !important;
+  text-decoration: underline;
+  cursor: pointer;
+}

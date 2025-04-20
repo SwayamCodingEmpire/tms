@@ -3,6 +3,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { TopicService } from '../../../services/admin/topic.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-topics',
@@ -11,6 +12,7 @@ import { TopicService } from '../../../services/admin/topic.service';
   styleUrl: './topics.component.scss'
 })
 export class TopicsComponent {
+  fileViewSelected: number | null = null;
   originalTopics: any[] = [];
   topics: any[] = [];
   currentPage = 1;
@@ -27,25 +29,46 @@ export class TopicsComponent {
   hoveredIndex: number | null = null;
   deleteModal: any;
   topicIndexToDelete: number | null = null;
+  topicToShowFiles: number | null = null;
   isAddingNewTopic = false;
   tempNewTopic: any = null;
+  fileModal: any;
+  showFileModal: any;
+  courseCode: string | null = null;
+  courseName: string | null = null;
 totalPages = Math.ceil(this.topics.length / this.pageSize);
 
   constructor(
     private topicService: TopicService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     console.log('Topics initialized');
   }
 
   ngAfterViewInit() {
+    console.log('jlfzsjdsgd');
     const tooltipTriggerList = [].slice.call(
       document.querySelectorAll('[data-bs-toggle="tooltip"]')
     );
     tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+    console.log('jlfzsjdsgd');
+    setTimeout(() => {
+      console.log('jlfzsjdsgd');
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+      // Initialize the delete modal
+      this.deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal')!);
+      this.showFileModal = new bootstrap.Modal(document.getElementById('showFileModal')!);
+      console.log('jlfzsjdsgd');
+      console.log('showFileModal element found:', this.showFileModal);
+    }, 1000);
   }
 
   ngOnInit(): void {
+    this.courseCode = this.route.snapshot.paramMap.get('code');
+    this.courseName = this.route.snapshot.paramMap.get('name');
     console.log('Topics ngOnInit called');
     this.initializeForms();
     this.loadCourses();
@@ -67,6 +90,8 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
       // Initialize the delete modal
       this.deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal')!);
+      this.fileModal = new bootstrap.Modal(document.getElementById('fileUploadModal')!);
+      this.showFileModal = new bootstrap.Modal(document.getElementById('showFileModal')!);
     }, 500);
   }
 
@@ -282,13 +307,13 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
   deleteCourse(index: number) {
     this.topicIndexToDelete = index;
-    const courseCode = this.topics[index].code;
-    const courseName = this.topics[index].name;
+    const topicName = this.topics[index].topicName;
 
     // Set the course code in the modal
-    const courseCodeElement = document.getElementById('courseCodeToDelete');
+    const courseCodeElement = document.getElementById('topicToDelete');
     if (courseCodeElement) {
-      courseCodeElement.textContent = `${courseCode}/ ${courseName}`;
+      console.log('Setting course code in modal:', topicName);
+      courseCodeElement.textContent = `${topicName}`;
     }
 
     // Show the modal
@@ -372,6 +397,45 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     for (let i = 0; i < pagedItems.length; i++) {
       this.topics[startIndex + i] = pagedItems[i];
     }
+  }
+
+  showUploader = false;
+
+  onUploadModalClose(): void {
+    this.showUploader = false;
+  }
+
+  onUploadComplete(fileData: any): void {
+    console.log('Uploaded File:', fileData);
+    // You can store the file info, send it to a server, etc.
+    this.showUploader = false;
+  }
+
+  showFiles(index: number) {
+    this.fileViewSelected = index;
+    console.log('Showing files for topic index:', index);
+    this.topicToShowFiles = index;
+    const files = this.topics[index].files;
+
+    // Set the course code in the modal
+
+    console.log('Showing files for topic index:', index);
+    // Show the modal
+    this.showFileModal.show();
+
+    console.log('Showing files for topic index:', index);
+    // // Add event listener to the confirm button
+    // const confirmBtn = document.getElementById('confirmSaveButton');
+    // if (confirmBtn) {
+    //   console.log('Showing files for topic index:', index);
+    //   // Remove any existing event listeners
+    //   confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+
+    //   // Add new event listener
+    //   document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
+    //     console.log('File Changes saved' + files)
+    //   });
+    // }
   }
 
 }

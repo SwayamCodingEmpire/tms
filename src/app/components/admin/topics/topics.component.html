@@ -5,7 +5,7 @@
 >
   <div class="row mb-3 align-items-center">
     <div class="col">
-      <label class="mt-3">Topics</label>
+      <label class="mt-3">Courses > {{courseName}}</label>
     </div>
     <div class="col" style="display: flex; justify-content: flex-end">
       <button
@@ -55,6 +55,15 @@
           Add Topic
         </button>
       </div>
+      <!-- Topic row with light blue background -->
+<div class="row mb-2">
+  <div class="col-12">
+    <div class="d-flex align-items-center p-3" style="background-color: #e8f2ff; border-radius: 5px;">
+      <div class="me-5" style="width: 120px; font-weight: 500;">{{courseCode}}</div>
+      <div style="font-weight: 500;">{{courseName}}</div>
+    </div>
+  </div>
+</div>
 
       <div
         *ngIf="!topics.length"
@@ -138,7 +147,7 @@
               <th style="background: #f8fbff; width: 4%;">Practice Time</th>
               <th style="background: #f8fbff; width: 6%;">Summary</th>
               <th style="background: #f8fbff; width: 8%;">Content</th>
-              <th style="background: #f8fbff; width: 5%;">Files</th>
+              <th style="background: #f8fbff; width: 4%;">Files</th>
             </tr>
           </thead>
           <tbody cdkDropList (cdkDropListDropped)="drop($event)">
@@ -162,6 +171,7 @@
               [disabled]="isAddingNewTopic || editingIndex !== null"
             >
             <i class="fas fa-bars"></i>
+             |
             </button>
                 <button
                   (click)="editCourse(i + pageSize * (currentPage - 1))"
@@ -423,14 +433,22 @@
             </td>
             <td>
                  <button
-                  (click)="editCourse(i + pageSize * (currentPage - 1))"
-                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+                  (click)="showUploader = true"
                   style="background-color: transparent; border: none"
                   [disabled]="isAddingNewTopic"
                 >
                 <i class="fas fa-arrow-up-from-bracket"></i>
                 </button>
+                <span class="mx-2 text-muted" style="font-size: 0.9rem;">|</span>
 
+  <button
+    (click)="showFiles(i + pageSize * (currentPage - 1))"
+    class="btn p-0 m-0 text-primary"
+    [disabled]="isAddingNewTopic"
+    style="background: none; border: none; font-size: 0.9rem; font-weight: 500;"
+  >
+    + {{course.files.length}} Files
+  </button>
 
             </td>
             </tr>
@@ -532,11 +550,11 @@
 </div>
 <!-- Delete Confirmation Modal -->
 <div
-  class="modal fade"
+  class="modal fade center"
   id="deleteConfirmationModal"
   tabindex="-1"
   aria-labelledby="deleteConfirmationModalLabel"
-  aria-hidden="true"
+  style="width: 100%;"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -545,22 +563,22 @@
         style="border-bottom: none"
       >
         <h5 class="modal-title" id="deleteConfirmationModalLabel">
-          Delete Course
+          Delete Topic
         </h5>
         <hr class="modal-title-line w-100 m-0 mt-3" />
         <button
-          type="button"
-          class="btn-close position-absolute end-0 top-0 m-3"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        >
-          <i class="fa-solid fa-xmark-large"></i>
-        </button>
+        type="button"
+        class="position-absolute end-0 top-0 m-3 border-0 bg-transparent"
+        data-bs-dismiss="modal"
+        aria-label="Close">
+        <i class="fa-solid fa-xmark-small-large fs-2"></i>
+      </button>
+
       </div>
       <div class="modal-body">
         <p>
-          Are you sure that you want to delete course
-          <span id="courseCodeToDelete"></span>?
+          Are you sure that you want to delete topic
+          <span id="topicToDelete"></span>?
         </p>
       </div>
       <div class="modal-footer justify-content-end border-0 pt-0">
@@ -646,3 +664,67 @@
     </div>
   </div>
 </div> -->
+
+<div *ngIf="showUploader" class="modal-overlays">
+  <div class="modal-contents">
+    <app-file-upload-modal
+      (closeEvent)="onUploadModalClose()"
+      (uploadCompleteEvent)="onUploadComplete($event)">
+    </app-file-upload-modal>
+  </div>
+</div>
+
+<div
+  class="modal fade center"
+  id="showFileModal"
+  tabindex="-1"
+  aria-labelledby="showFileModalLabel"
+  style="width: 100%;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div
+        class="modal-header flex-column align-items-start pb-0"
+        style="border-bottom: none"
+      >
+        <h5 class="modal-title" id="showFileModalLabel">
+          File
+        </h5>
+        <hr class="modal-title-line w-100 m-0 mt-3" />
+        <button
+        type="button"
+        class="position-absolute end-0 top-0 m-3 border-0 bg-transparent"
+        data-bs-dismiss="modal"
+        aria-label="Close">
+        <i class="fa-solid fa-xmark-small-large fs-2"></i>
+      </button>
+
+      </div>
+      <!-- Only modifying the modal body -->
+      <div class="modal-body" *ngIf="fileViewSelected !== null">
+        <div class="file-list">
+          <div class="d-flex justify-content-between align-items-center py-0" *ngFor="let file of topics[fileViewSelected]?.files">
+            <span class="px-1">{{ file }}</span>
+            <button class="btn btn-link text-secondary border-0 p-1">
+              <i class="fa-regular fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer justify-content-end border-0 pt-0">
+        <button
+          type="button"
+          class="btn btn-primary px-4"
+          id="confirmSaveButton"
+          style="
+            background-color: #2962ff;
+            border-radius: 6px;
+            font-weight: 500;
+          "
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -18,6 +18,7 @@ import { TopicsComponent } from './components/admin/topics/topics.component';
 import { CustomTooltipComponent } from './components/shared/custom-tooltip/custom-tooltip.component';
 import { TopicService } from './services/admin/topic.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { FileUploadModalComponent } from './components/shared/file-upload-modal/file-upload-modal.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     CoursesComponent,
     FooterComponent,
     TopicsComponent,
-    CustomTooltipComponent
+    CustomTooltipComponent,
+    FileUploadModalComponent
   ],
   imports: [
     BrowserModule,

@@ -107,3 +107,25 @@ tr {
 .cursor-grab {
   cursor: grab;
 }
+
+.modal-overlays {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); // dim background
+  z-index: 1050; // make sure it's above everything else
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-contents {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  width: 50%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
