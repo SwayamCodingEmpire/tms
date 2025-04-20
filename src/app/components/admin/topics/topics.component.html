@@ -207,7 +207,6 @@
                 class="text-left px-3"
               >
               <span
-                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
                   >{{ i+1 }}</span
                 >
 
@@ -480,6 +479,7 @@
   *ngIf="isSummaryPopupOpen"
   [style.top.px]="popupPosition.top"
   [style.left.px]="popupPosition.left"
+  id="editContentModal"
 >
   <div class="d-flex justify-content-between align-items-center">
     <h6 class="mb-2">Summary</h6>
@@ -489,20 +489,20 @@
     <textarea
       class="form-control"
       rows="3"
-      formControlName="description"
+      formControlName="summary"
       maxlength="40"
     ></textarea>
     <div
       *ngIf="
-        summaryForm.get('description')?.invalid &&
-        summaryForm.get('description')?.touched
+        summaryForm.get('summary')?.invalid &&
+        summaryForm.get('summary')?.touched
       "
       class="text-danger small"
     >
-      <div *ngIf="summaryForm.get('description')?.errors?.['required']">
+      <div *ngIf="summaryForm.get('summary')?.errors?.['required']">
         Description is required.
       </div>
-      <div *ngIf="summaryForm.get('description')?.errors?.['maxlength']">
+      <div *ngIf="summaryForm.get('summary')?.errors?.['maxlength']">
         Description cannot exceed 40 characters.
       </div>
     </div>
@@ -515,7 +515,7 @@
       <button
         class="btn btn-primary me-2"
         style="min-width: 100px"
-        (click)="saveDescription(); closeDescriptionPopup()"
+        (click)="saveSummary(); closeDescriptionPopup()"
         [disabled]="summaryForm.invalid"
       >
         Save
@@ -588,3 +588,61 @@
     </div>
   </div>
 </div>
+
+<!-- Description Modal -->
+<!-- <div
+  class="description-popup shadow-sm p-3"
+  *ngIf="isSummaryPopupOpen"
+  [style.top.px]="popupPosition.top"
+  [style.left.px]="popupPosition.left"
+  id="editContentModal"
+>
+  <div class="d-flex justify-content-between align-items-center">
+    <h6 class="mb-2">Content</h6>
+    <button class="btn-close" (click)="closeSummaryPopup()"></button>
+  </div>
+  <form [formGroup]="summaryForm">
+    <textarea
+      class="form-control"
+      rows="3"
+      formControlName="summary"
+      maxlength="40"
+    ></textarea>
+    <div
+      *ngIf="
+        summaryForm.get('summary')?.invalid &&
+        summaryForm.get('summary')?.touched
+      "
+      class="text-danger small"
+    >
+      <div *ngIf="summaryForm.get('summary')?.errors?.['required']">
+        Description is required.
+      </div>
+      <div *ngIf="summaryForm.get('summary')?.errors?.['maxlength']">
+        Description cannot exceed 40 characters.
+      </div>
+    </div>
+  </form>
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <small class="text-muted"
+      >{{ summaryForm.get("summary")?.value.length }}/40</small
+    >
+    <div>
+      <button
+        class="btn btn-primary me-2"
+        style="min-width: 100px"
+        (click)="saveContent(); closeContentPopup()"
+        [disabled]="summaryForm.invalid"
+      >
+        Save
+      </button>
+      <button
+        class="btn btn-outline-secondary"
+        style="min-width: 100px"
+        (click)="closeContentPopup()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div> -->

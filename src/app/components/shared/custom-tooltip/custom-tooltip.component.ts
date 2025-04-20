@@ -23,7 +23,7 @@ export class CustomTooltipComponent {
       this.position === 'top'
         ? rect.top - 10
         : this.position === 'bottom'
-        ? rect.bottom + 10
+        ? rect.bottom + 5
         : rect.top;
 
     this.show = true;

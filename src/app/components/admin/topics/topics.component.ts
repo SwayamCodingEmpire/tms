@@ -73,12 +73,11 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
   private initializeForms() {
     // Main course form for editing
     this.topicForm = this.fb.group({
-      code: ['', Validators.required],
       topicName: ['', Validators.required],
       theoryTime: ['0 hr', Validators.required],
       practiceTime: ['0 hr', Validators.required],
       summary: ['', [Validators.required, Validators.maxLength(40)]],
-      topicsString: ['']
+      content: ['', [Validators.required, Validators.maxLength(100)]],
     });
 
     // Search form
@@ -95,7 +94,7 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
     // Description popup form
     this.summaryForm = this.fb.group({
-      description: ['', [Validators.required, Validators.maxLength(40)]]
+      summary: ['', [Validators.required, Validators.maxLength(40)]]
     });
   }
 
@@ -223,12 +222,11 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     console.log('Editing summary:', topic.summary);
     // Set form values from the selected course
     this.topicForm.setValue({
-      code: topic.code,
       topicName: topic.topicName,
       theoryTime: topic.theoryTime,
       practiceTime: topic.practiceTime,
       summary: topic.summary,
-      topicsString: topic.topics.join(', ')
+      content: topic.content,
     });
 
     console.log('Editing course:', topic);
@@ -324,6 +322,7 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     }
   }
   openDescriptionPopup(event: MouseEvent, course: any) {
+    console.log('Opening description popup for course:', course);
     this.summaryForm.get('summary')?.setValue(course.summary);
     this.isSummaryPopupOpen = true;
 
@@ -349,7 +348,7 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     this.isSummaryPopupOpen = false;
   }
 
-  saveDescription() {
+  saveSummary() {
     if (this.editingIndex !== null && this.summaryForm.valid) {
       const description = this.summaryForm.get('summary')?.value.trim();
       if (description) {
