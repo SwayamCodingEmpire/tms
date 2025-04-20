@@ -19,6 +19,8 @@ import { CustomTooltipComponent } from './components/shared/custom-tooltip/custo
 import { TopicService } from './services/admin/topic.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FileUploadModalComponent } from './components/shared/file-upload-modal/file-upload-modal.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { CustomMatPaginatorIntlService } from './services/shared/custom-mat-paginator-intl.service';
 
 @NgModule({
   declarations: [
@@ -40,13 +42,14 @@ import { FileUploadModalComponent } from './components/shared/file-upload-modal/
     BrowserAnimationsModule,
     HttpClientModule,
     DragDropModule,
+    MatPaginatorModule,
     ToastrModule.forRoot({
       positionClass: 'toast-top-right', // Set position to top-right
       timeOut: 3000, // Auto close after 3 seconds
       preventDuplicates: true
     })
   ],
-  providers: [CourseServicesService, TopicService],
+  providers: [CourseServicesService, TopicService, CustomMatPaginatorIntlService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

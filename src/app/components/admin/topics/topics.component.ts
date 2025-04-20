@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './topics.component.scss'
 })
 export class TopicsComponent {
+  pageSizeOptions: number[] = [5, 10, 15, 20];
   fileViewSelected: number | null = null;
   originalTopics: any[] = [];
   topics: any[] = [];
@@ -23,7 +24,9 @@ export class TopicsComponent {
   topicForm!: FormGroup;
   searchForm!: FormGroup;
   pageSizeForm!: FormGroup;
+  contentForm!: FormGroup;
   summaryForm!: FormGroup;
+  isContentPopupOpen = false;
   isSummaryPopupOpen = false;
   popupPosition = { top: 0, left: 0 };
   hoveredIndex: number | null = null;
@@ -90,6 +93,7 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
       // Initialize the delete modal
       this.deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal')!);
+
       this.fileModal = new bootstrap.Modal(document.getElementById('fileUploadModal')!);
       this.showFileModal = new bootstrap.Modal(document.getElementById('showFileModal')!);
     }, 500);
@@ -121,6 +125,10 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     this.summaryForm = this.fb.group({
       summary: ['', [Validators.required, Validators.maxLength(40)]]
     });
+
+    this.contentForm = this.fb.group({
+      content: ['', [Validators.required, Validators.maxLength(600)]]
+    });
   }
 
   loadCourses() {
@@ -135,6 +143,13 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     });
   }
 
+  // onPageChange(event: PageEvent): void {
+  //   this.pageSize = event.pageSize;
+  //   this.currentPage = event.pageIndex;
+  //   this.loadCourses();
+  // }
+
+
   filterCourses() {
     this.currentPage = 1;
     const searchTerm = this.searchForm.get('searchTerm')?.value;
@@ -145,9 +160,11 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     } else {
       // Filter courses based on search term
       this.topics = this.originalTopics.filter(course =>
-        course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.topicName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.summary.toLowerCase().includes(searchTerm.toLowerCase())
+        course.theoryTime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.practiceTime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
   }
@@ -155,13 +172,13 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
 
 
-  goToFirstPage() {
-    this.currentPage = 1;
-  }
+  // goToFirstPage() {
+  //   this.currentPage = 1;
+  // }
 
-  goToLastPage() {
-    this.currentPage = this.totalPages;
-  }
+  // goToLastPage() {
+  //   this.currentPage = this.totalPages;
+  // }
 
   previousPage() {
     if (this.currentPage > 1) {
@@ -366,6 +383,27 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     };
   }
 
+  openContentPopup(event: MouseEvent, course: any) {
+    console.log('Opening description popup for course:', course);
+    console.log('Opening description popup for course:', course.content);
+    this.contentForm.get('content')?.setValue(course.content);
+    this.isContentPopupOpen = true;
+
+    const target = event.target as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+    const popupWidth = 450; // Match with your .description-popup CSS width
+
+    const shiftLeftBy = 160;
+    this.popupPosition = {
+      top: rect.bottom + scrollTop + 10, // space below element
+      left: rect.left + scrollLeft + rect.width / 2 - popupWidth / 2 - shiftLeftBy // center horizontally
+    };
+  }
+
 
 
 
@@ -373,16 +411,33 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     this.isSummaryPopupOpen = false;
   }
 
+  closeContentPopup() {
+    this.isContentPopupOpen = false;
+  }
+
   saveSummary() {
     if (this.editingIndex !== null && this.summaryForm.valid) {
       const description = this.summaryForm.get('summary')?.value.trim();
       if (description) {
-        this.topics[this.editingIndex].description = description;
+        this.topics[this.editingIndex].summary = description;
         // Also update the description in the course form
         this.topicForm.get('summary')?.setValue(description);
       }
     }
     const modal = bootstrap.Modal.getInstance(document.getElementById('editDescriptionModal')!);
+    modal?.hide();
+  }
+
+  saveContent(){
+    if (this.editingIndex !== null && this.contentForm.valid) {
+      const description = this.contentForm.get('content')?.value.trim();
+      if (description) {
+        this.topics[this.editingIndex].content = description;
+        // Also update the description in the course form
+        this.topicForm.get('content')?.setValue(description);
+      }
+    }
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editContentModal')!);
     modal?.hide();
   }
 
@@ -436,6 +491,44 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
     //     console.log('File Changes saved' + files)
     //   });
     // }
+  }
+
+  calculateTotalPages(): void {
+    this.totalPages = Math.ceil(this.topics.length / this.pageSize);
+  }
+
+  // Navigate to first page
+  goToFirstPage(): void {
+    this.currentPage = 1;
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      // this.initializeTooltips();
+    }
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      // this.initializeTooltips();
+    }
+  }
+
+
+  // Navigate to last page
+  goToLastPage(): void {
+    this.currentPage = this.totalPages;
+  }
+
+  // Update pagination when page size changes
+  updatePagination(): void {
+    this.calculateTotalPages();
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages || 1;
+    }
+    // this.initializeTooltips();
   }
 
 }

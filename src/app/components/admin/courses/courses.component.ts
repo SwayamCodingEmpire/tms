@@ -125,13 +125,13 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
 
 
 
-  goToFirstPage() {
-    this.currentPage = 1;
-  }
+  // goToFirstPage() {
+  //   this.currentPage = 1;
+  // }
 
-  goToLastPage() {
-    this.currentPage = this.totalPages;
-  }
+  // goToLastPage() {
+  //   this.currentPage = this.totalPages;
+  // }
 
   previousPage() {
     if (this.currentPage > 1) {
@@ -349,6 +349,44 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
     }
     const modal = bootstrap.Modal.getInstance(document.getElementById('editDescriptionModal')!);
     modal?.hide();
+  }
+
+  calculateTotalPages(): void {
+    this.totalPages = Math.ceil(this.courses.length / this.pageSize);
+  }
+
+  // Navigate to first page
+  goToFirstPage(): void {
+    this.currentPage = 1;
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      // this.initializeTooltips();
+    }
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      // this.initializeTooltips();
+    }
+  }
+
+
+  // Navigate to last page
+  goToLastPage(): void {
+    this.currentPage = this.totalPages;
+  }
+
+  // Update pagination when page size changes
+  updatePagination(): void {
+    this.calculateTotalPages();
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages || 1;
+    }
+    // this.initializeTooltips();
   }
 }
 

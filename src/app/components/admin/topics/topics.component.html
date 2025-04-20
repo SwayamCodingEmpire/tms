@@ -410,7 +410,7 @@
               <!-- EDIT MODE -->
               <span
                 *ngIf="editingIndex === i + pageSize * (currentPage - 1)"
-                (click)="openDescriptionPopup($event, course)"
+                (click)="openContentPopup($event, course)"
                 style="
                   font-size: small;
                   text-align: left;
@@ -459,7 +459,7 @@
       <div
         class="d-flex justify-content-end align-items-center w-100 custom-font"
       >
-        <span class="me-3">
+        <!-- <span class="me-3">
           Showing {{ (currentPage - 1) * pageSize + 1 }} to
           {{
             currentPage * pageSize > topics.length
@@ -467,14 +467,50 @@
               : currentPage * pageSize
           }}
           of {{ topics.length }} entries
-        </span>
+        </span> -->
 
-        <pagination-controls
+        <!-- <pagination-controls
           (pageChange)="currentPage = $event"
           class="align-items-center mt-3"
-        ></pagination-controls>
+        ></pagination-controls> -->
 
-        <form [formGroup]="pageSizeForm" class="d-flex align-items-center ms-2">
+        <div class="d-flex justify-content-between align-items-center w-100 custom-font">
+          <div class="ms-auto text-end me-1">
+            <span>
+              Showing {{ (currentPage - 1) * pageSize + 1 }} to
+              {{ (currentPage * pageSize > topics.length ? topics.length : currentPage * pageSize) }}
+              of {{ topics.length }} entries
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-double-left"></i>
+              </span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-left"></i></span>
+            </button>
+
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #2f72f4; color: #2f72f4;">{{ currentPage }}</button>
+
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-right"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-double-right"></i></span>
+            </button>
+
+            <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize" (change)="updatePagination()">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- <form [formGroup]="pageSizeForm" class="d-flex align-items-center ms-2">
           <input
             type="number"
             class="form-control"
@@ -483,7 +519,7 @@
             min="1"
             [max]="topics.length"
           />
-        </form>
+        </form> -->
       </div>
     </div>
   </div>
@@ -497,7 +533,7 @@
   *ngIf="isSummaryPopupOpen"
   [style.top.px]="popupPosition.top"
   [style.left.px]="popupPosition.left"
-  id="editContentModal"
+  id="editSummaryModal"
 >
   <div class="d-flex justify-content-between align-items-center">
     <h6 class="mb-2">Summary</h6>
@@ -608,49 +644,49 @@
 </div>
 
 <!-- Description Modal -->
-<!-- <div
+<div
   class="description-popup shadow-sm p-3"
-  *ngIf="isSummaryPopupOpen"
+  *ngIf="isContentPopupOpen"
   [style.top.px]="popupPosition.top"
   [style.left.px]="popupPosition.left"
   id="editContentModal"
 >
   <div class="d-flex justify-content-between align-items-center">
     <h6 class="mb-2">Content</h6>
-    <button class="btn-close" (click)="closeSummaryPopup()"></button>
+    <button class="btn-close" (click)="closeContentPopup()"></button>
   </div>
-  <form [formGroup]="summaryForm">
+  <form [formGroup]="contentForm">
     <textarea
       class="form-control"
       rows="3"
-      formControlName="summary"
-      maxlength="40"
+      formControlName="content"
+      maxlength="600"
     ></textarea>
     <div
       *ngIf="
-        summaryForm.get('summary')?.invalid &&
-        summaryForm.get('summary')?.touched
+        contentForm.get('content')?.invalid &&
+        contentForm.get('content')?.touched
       "
       class="text-danger small"
     >
-      <div *ngIf="summaryForm.get('summary')?.errors?.['required']">
+      <div *ngIf="contentForm.get('content')?.errors?.['required']">
         Description is required.
       </div>
-      <div *ngIf="summaryForm.get('summary')?.errors?.['maxlength']">
+      <div *ngIf="contentForm.get('content')?.errors?.['maxlength']">
         Description cannot exceed 40 characters.
       </div>
     </div>
   </form>
   <div class="d-flex justify-content-between align-items-center mt-3">
     <small class="text-muted"
-      >{{ summaryForm.get("summary")?.value.length }}/40</small
+      >{{ contentForm.get("content")?.value.length }}/600</small
     >
     <div>
       <button
         class="btn btn-primary me-2"
         style="min-width: 100px"
         (click)="saveContent(); closeContentPopup()"
-        [disabled]="summaryForm.invalid"
+        [disabled]="contentForm.invalid"
       >
         Save
       </button>
@@ -663,7 +699,7 @@
       </button>
     </div>
   </div>
-</div> -->
+</div>
 
 <div *ngIf="showUploader" class="modal-overlays">
   <div class="modal-contents">
@@ -695,7 +731,7 @@
         class="position-absolute end-0 top-0 m-3 border-0 bg-transparent"
         data-bs-dismiss="modal"
         aria-label="Close">
-        <i class="fa-solid fa-xmark-small-large fs-2"></i>
+        <i class="fa-light fa-xmark"></i>
       </button>
 
       </div>

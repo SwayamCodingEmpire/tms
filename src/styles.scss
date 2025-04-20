@@ -9,3 +9,27 @@
 .table-striped tbody tr:nth-of-type(odd) {
     background-color: red !important; /* Use !important to override Bootstrap */
   }
+
+
+  /* styles.scss */
+::ng-deep .mat-paginator.custom-paginator .mat-paginator-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ensure the little select box is the last item */
+::ng-deep .mat-paginator.custom-paginator .mat-paginator-page-size {
+  order: 2;        /* after the range+buttons */
+  margin-left: auto;
+}
+
+/* the range + nav buttons group comes first */
+::ng-deep .mat-paginator.custom-paginator .mat-paginator-range-actions {
+  order: 1;
+}
+
+/* optional: tighten up padding */
+::ng-deep .mat-paginator.custom-paginator {
+  padding: 0.5rem 1rem;
+}

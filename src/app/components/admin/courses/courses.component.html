@@ -414,7 +414,7 @@
       <div
         class="d-flex justify-content-end align-items-center w-100 custom-font"
       >
-        <span class="me-3">
+        <!-- <span class="me-3">
           Showing {{ (currentPage - 1) * pageSize + 1 }} to
           {{
             currentPage * pageSize > courses.length
@@ -422,14 +422,45 @@
               : currentPage * pageSize
           }}
           of {{ courses.length }} entries
-        </span>
+        </span> -->
 
-        <pagination-controls
-          (pageChange)="currentPage = $event"
-          class="align-items-center mt-3"
-        ></pagination-controls>
+        <div class="d-flex justify-content-between align-items-center w-100 custom-font">
+          <div class="ms-auto text-end me-1">
+            <span>
+              Showing {{ (currentPage - 1) * pageSize + 1 }} to
+              {{ (currentPage * pageSize > courses.length ? courses.length : currentPage * pageSize) }}
+              of {{ courses.length }} entries
+            </span>
+          </div>
 
-        <form [formGroup]="pageSizeForm" class="d-flex align-items-center ms-2">
+          <div class="d-flex align-items-center">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-double-left"></i>
+              </span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-left"></i></span>
+            </button>
+
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #2f72f4; color: #2f72f4;">{{ currentPage }}</button>
+
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-right"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-double-right"></i></span>
+            </button>
+
+            <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize" (change)="updatePagination()">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- <form [formGroup]="pageSizeForm" class="d-flex align-items-center ms-2">
           <input
             type="number"
             class="form-control"
@@ -438,7 +469,7 @@
             min="1"
             [max]="courses.length"
           />
-        </form>
+        </form> -->
       </div>
     </div>
   </div>
