@@ -3,11 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { CoursesComponent } from './components/admin/courses/courses.component';
 import { authGuard } from './guards/auth.guard';
 import { LoginComponent } from './components/login/login.component';
+import { TopicsComponent } from './components/admin/topics/topics.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: 'login', component: LoginComponent},
-  {path : 'courses', component : CoursesComponent, canActivate : [authGuard]}
+  {path : 'courses', component : CoursesComponent, canActivate : [authGuard]},
+  {path : 'topics', component : TopicsComponent,
+    // canActivate : []
+  }
 ];
 
 @NgModule({

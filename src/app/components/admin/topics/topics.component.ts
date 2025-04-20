@@ -1,0 +1,378 @@
+import { Component } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as bootstrap from 'bootstrap';
+import { TopicService } from '../../../services/admin/topic.service';
+
+@Component({
+  selector: 'app-topics',
+  standalone: false,
+  templateUrl: './topics.component.html',
+  styleUrl: './topics.component.scss'
+})
+export class TopicsComponent {
+  originalTopics: any[] = [];
+  topics: any[] = [];
+  currentPage = 1;
+  pageSize = 10;
+  sortedColumn: string = '';
+  isAscending: boolean = true;
+  editingIndex: number | null = null;
+  topicForm!: FormGroup;
+  searchForm!: FormGroup;
+  pageSizeForm!: FormGroup;
+  summaryForm!: FormGroup;
+  isSummaryPopupOpen = false;
+  popupPosition = { top: 0, left: 0 };
+  hoveredIndex: number | null = null;
+  deleteModal: any;
+  topicIndexToDelete: number | null = null;
+  isAddingNewTopic = false;
+  tempNewTopic: any = null;
+totalPages = Math.ceil(this.topics.length / this.pageSize);
+
+  constructor(
+    private topicService: TopicService,
+    private fb: FormBuilder
+  ) {
+    console.log('Topics initialized');
+  }
+
+  ngAfterViewInit() {
+    const tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+  }
+
+  ngOnInit(): void {
+    console.log('Topics ngOnInit called');
+    this.initializeForms();
+    this.loadCourses();
+
+    // Initialize search term change detection
+    this.searchForm.get('searchTerm')?.valueChanges.subscribe(term => {
+      this.filterCourses();
+    });
+
+    // Initialize page size change detection
+    this.pageSizeForm.get('pageSize')?.valueChanges.subscribe(size => {
+      this.pageSize = size;
+    });
+
+    // Initialize Bootstrap tooltips and modal
+    setTimeout(() => {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+      // Initialize the delete modal
+      this.deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal')!);
+    }, 500);
+  }
+
+  private initializeForms() {
+    // Main course form for editing
+    this.topicForm = this.fb.group({
+      code: ['', Validators.required],
+      topicName: ['', Validators.required],
+      theoryTime: ['0 hr', Validators.required],
+      practiceTime: ['0 hr', Validators.required],
+      summary: ['', [Validators.required, Validators.maxLength(40)]],
+      topicsString: ['']
+    });
+
+    // Search form
+    this.searchForm = this.fb.group({
+      searchTerm: ['']
+    });
+
+
+
+    // Page size form
+    this.pageSizeForm = this.fb.group({
+      pageSize: [8, [Validators.required, Validators.min(1)]]
+    });
+
+    // Description popup form
+    this.summaryForm = this.fb.group({
+      description: ['', [Validators.required, Validators.maxLength(40)]]
+    });
+  }
+
+  loadCourses() {
+    this.topicService.getTopics().subscribe((data) => {
+      this.originalTopics = data;
+      this.topics = [...this.originalTopics];
+
+      // Restore any search filtering that was applied
+      if (this.searchForm.get('searchTerm')?.value) {
+        this.filterCourses();
+      }
+    });
+  }
+
+  filterCourses() {
+    this.currentPage = 1;
+    const searchTerm = this.searchForm.get('searchTerm')?.value;
+
+    if (!searchTerm || searchTerm.trim() === '') {
+      // If search term is empty, show all courses
+      this.topics = [...this.originalTopics];
+    } else {
+      // Filter courses based on search term
+      this.topics = this.originalTopics.filter(course =>
+        course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.topicName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.summary.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+  }
+
+
+
+
+  goToFirstPage() {
+    this.currentPage = 1;
+  }
+
+  goToLastPage() {
+    this.currentPage = this.totalPages;
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  onPageSizeChange() {
+    this.totalPages = Math.ceil(this.topics.length / this.pageSize);
+    this.currentPage = 1;
+  }
+
+  addRow() {
+    this.isAddingNewTopic = true;
+
+    // Create a temporary course object
+    this.tempNewTopic = {
+      code: "",
+      topicName: "",
+      theoryTime: "",
+      practiceTime: "",
+      summary: "",
+      topics: []
+    };
+
+    // Add the temporary course to the beginning of the array
+    this.topics.unshift(this.tempNewTopic);
+
+    // Start editing the new course
+    this.editingIndex = 0;
+
+    // Reset the form with default values
+    this.topicForm.reset({
+      code: "",
+      topicName: "",
+      theoryTime: "",
+      practiceTime: "",
+      summary: "",
+      topicsString: ""
+    });
+
+    // Make sure we're on the first page to see the new row
+    this.currentPage = 1;
+  }
+
+  sortTable(column: string, ascending: boolean) {
+    this.sortedColumn = column;
+    this.isAscending = ascending;
+    this.topics.sort((a: any, b: any) => {
+      const valA = a[column].toString().toLowerCase();
+      const valB = b[column].toString().toLowerCase();
+      return ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    });
+  }
+
+  resetTable() {
+    this.loadCourses();
+    this.sortedColumn = '';
+    this.isAscending = true;
+    this.pageSizeForm.get('pageSize')?.setValue(8);
+    this.currentPage = 1;
+    this.searchForm.get('searchTerm')?.setValue('');
+  }
+
+  getRemainingTopics(topics: string[]): string {
+    return topics.slice(2)
+                 .map((topic, index) => `${index + 1}. ${topic}`)
+                 .join('\n');
+  }
+
+  editCourse(index: number) {
+    this.editingIndex = index;
+    const topic = this.topics[index];
+
+    console.log('Editing course:', topic);
+    console.log('Editing index:', index);
+    console.log('Editing summary:', topic.summary);
+    // Set form values from the selected course
+    this.topicForm.setValue({
+      code: topic.code,
+      topicName: topic.topicName,
+      theoryTime: topic.theoryTime,
+      practiceTime: topic.practiceTime,
+      summary: topic.summary,
+      topicsString: topic.topics.join(', ')
+    });
+
+    console.log('Editing course:', topic);
+  }
+
+  saveCourse(index: number) {
+    if (this.topicForm.valid) {
+      const formValue = this.topicForm.value;
+      const updatedCourse = {
+        ...formValue,
+        topics: formValue.topicsString
+          ? formValue.topicsString.split(',').map((topic: string) => topic.trim()).filter((topic: string) => topic !== '')
+          : []
+      };
+
+      if (this.isAddingNewTopic && index === 0) {
+        // Adding a new course
+        this.topicService.addTopics(updatedCourse).subscribe(() => {
+          this.isAddingNewTopic = false;
+          this.cancelEdit();
+          this.loadCourses(); // Reload all courses from service
+        }, (error) => {
+          console.error('Error adding course:', error);
+          // Handle error case
+          this.loadCourses(); // Reload to restore original state
+        });
+      } else {
+        // Updating an existing course
+        const courseId = this.topics[index].id;
+        this.topicService.updateTopics(courseId, updatedCourse).subscribe(() => {
+          this.cancelEdit();
+          this.loadCourses(); // Reload all courses from service
+        }, (error) => {
+          console.error('Error updating course:', error);
+          // Handle error case
+          this.loadCourses(); // Reload to restore original state
+        });
+      }
+    }
+  }
+
+  cancelEdit() {
+    if (this.isAddingNewTopic) {
+      // Remove the temporary new course
+      this.topics.shift();
+      this.isAddingNewTopic = false;
+      this.loadCourses(); // Refresh the table
+    }
+
+    this.editingIndex = null;
+    this.topicForm.reset();
+  }
+
+  deleteCourse(index: number) {
+    this.topicIndexToDelete = index;
+    const courseCode = this.topics[index].code;
+    const courseName = this.topics[index].name;
+
+    // Set the course code in the modal
+    const courseCodeElement = document.getElementById('courseCodeToDelete');
+    if (courseCodeElement) {
+      courseCodeElement.textContent = `${courseCode}/ ${courseName}`;
+    }
+
+    // Show the modal
+    this.deleteModal.show();
+
+    // Add event listener to the confirm button
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmBtn) {
+      // Remove any existing event listeners
+      confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+
+      // Add new event listener
+      document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
+        this.confirmDeleteCourse();
+      });
+    }
+  }
+
+  confirmDeleteCourse() {
+    if (this.topicIndexToDelete !== null) {
+      const courseId = this.topics[this.topicIndexToDelete].id;
+      this.topicService.deleteTopic(courseId).subscribe(() => {
+        this.topicIndexToDelete = null;
+        this.deleteModal.hide();
+        this.loadCourses(); // Reload courses after deletion
+      }, (error) => {
+        console.error('Error deleting course:', error);
+        this.deleteModal.hide();
+        this.loadCourses(); // Reload to restore original state
+      });
+    }
+  }
+  openDescriptionPopup(event: MouseEvent, course: any) {
+    this.summaryForm.get('summary')?.setValue(course.summary);
+    this.isSummaryPopupOpen = true;
+
+    const target = event.target as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+    const popupWidth = 450; // Match with your .description-popup CSS width
+
+    const shiftLeftBy = 160;
+    this.popupPosition = {
+      top: rect.bottom + scrollTop + 10, // space below element
+      left: rect.left + scrollLeft + rect.width / 2 - popupWidth / 2 - shiftLeftBy // center horizontally
+    };
+  }
+
+
+
+
+  closeDescriptionPopup() {
+    this.isSummaryPopupOpen = false;
+  }
+
+  saveDescription() {
+    if (this.editingIndex !== null && this.summaryForm.valid) {
+      const description = this.summaryForm.get('summary')?.value.trim();
+      if (description) {
+        this.topics[this.editingIndex].description = description;
+        // Also update the description in the course form
+        this.topicForm.get('summary')?.setValue(description);
+      }
+    }
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editDescriptionModal')!);
+    modal?.hide();
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const pagedItems = this.topics.slice(startIndex, startIndex + this.pageSize);
+
+    // Move the item within the paged slice
+    moveItemInArray(pagedItems, event.previousIndex, event.currentIndex);
+
+    // Reflect the changes in the original array
+    for (let i = 0; i < pagedItems.length; i++) {
+      this.topics[startIndex + i] = pagedItems[i];
+    }
+  }
+
+}

@@ -99,3 +99,11 @@ tr {
 //   top: calc(50% - 10px);
 //   left: -10px;
 // }
+.tooltip-inner {
+  background-color: #ffffff !important; /* White background */
+  color: #333333 !important;           /* Dark text */
+  border: 1px solid #ccc;              /* Optional: subtle border */
+}
+.cursor-grab {
+  cursor: grab;
+}

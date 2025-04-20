@@ -1,0 +1,13 @@
+<div class="tooltip-wrapper">
+  <ng-content></ng-content>
+</div>
+
+<div
+  class="tooltip-box"
+  *ngIf="show"
+  [ngClass]="position"
+  [style.top.px]="tooltipY"
+  [style.left.px]="tooltipX"
+>
+  {{ text }}
+</div>

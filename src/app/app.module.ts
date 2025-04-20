@@ -14,6 +14,10 @@ import { LoginComponent } from './components/login/login.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CourseServicesService } from './services/admin/course-services.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { TopicsComponent } from './components/admin/topics/topics.component';
+import { CustomTooltipComponent } from './components/shared/custom-tooltip/custom-tooltip.component';
+import { TopicService } from './services/admin/topic.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -21,7 +25,9 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     LoginComponent,
     NavbarComponent,
     CoursesComponent,
-    FooterComponent
+    FooterComponent,
+    TopicsComponent,
+    CustomTooltipComponent
   ],
   imports: [
     BrowserModule,
@@ -31,13 +37,14 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    DragDropModule,
     ToastrModule.forRoot({
       positionClass: 'toast-top-right', // Set position to top-right
       timeOut: 3000, // Auto close after 3 seconds
       preventDuplicates: true
     })
   ],
-  providers: [CourseServicesService],
+  providers: [CourseServicesService, TopicService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
