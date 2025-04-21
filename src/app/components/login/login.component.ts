@@ -31,6 +31,15 @@ export class LoginComponent {
         this.toastr.success('Login Successful');
         localStorage.setItem('loggedIn', 'true');
         this.router.navigate(['/courses']);
+
+        //Store the user name in local storage
+        
+        const user = {
+          user: this.loginForm.value.userName,
+          password: this.loginForm.value.password
+        };
+        localStorage.setItem('user', JSON.stringify(user));
+        
       } else {
         this.toastr.error('Invalid Username or Password');
       }

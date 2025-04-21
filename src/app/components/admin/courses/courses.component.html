@@ -202,17 +202,19 @@
                   max-width: 70px;
                 "
               >
-                <a
-                  *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="bottom"
-                  [attr.title]="'Click to view or add topic'"
-                  class="text-primary"
-                  [routerLink]="['/topics', course.code, course.name]"
-                  style="cursor: pointer; margin-left: 4px"
-                >
-                  {{ course.code }}
-                </a>
+              <a
+              *ngIf="editingIndex !== i + pageSize * (currentPage - 1)"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              [attr.title]="'Click to view or add topic'"
+              class="text-primary"
+              [routerLink]="['/topics', course.code, course.name]"
+              (click)="hideTooltip($event)"
+              style="cursor: pointer; margin-left: 4px"
+            >
+              {{ course.code }}
+            </a>
+            
 
                 <form
                   [formGroup]="courseForm"

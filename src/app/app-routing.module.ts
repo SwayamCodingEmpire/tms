@@ -9,7 +9,7 @@ import { ProgramsComponent } from './components/admin/programs/programs.componen
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: 'login', component: LoginComponent},
-  {path : 'courses', component : CoursesComponent, canActivate : [authGuard]},
+  { path: 'courses', component: CoursesComponent, canActivate: [authGuard] }, // Protected route
   {path: 'topics/:code/:name', component: TopicsComponent},
   {path: 'programs', component: ProgramsComponent}
 ];

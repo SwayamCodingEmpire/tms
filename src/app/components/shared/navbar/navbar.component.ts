@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -7,11 +8,13 @@ import { Component } from '@angular/core';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
-
+  constructor(private router : Router) { }
   isDropdownOpen = false;
   userName: string = '';
   userInitials: string = '';
   option: boolean = false;
+
+  
 
   ngOnInit(): void {
     const storedUser = localStorage.getItem('user');
@@ -48,17 +51,24 @@ export class NavbarComponent {
   changePassword() {
     console.log('Change Password Clicked');
   }
-
   signOut() {
-    console.log('Sign Out Clicked');
-    localStorage.clear();
-    window.location.reload();
+    // Clear the session or any login-related data
+    localStorage.removeItem('loggedIn'); // Remove login status
+    localStorage.removeItem('authToken'); // If you're using a token (optional)
+  
+    // Navigate to the login page
+    this.router.navigate(['/login']);
   }
+  
 
   isCoursesDropdownOpen = false;
 
 toggleCoursesDropdown() {
   this.isCoursesDropdownOpen = !this.isCoursesDropdownOpen;
+}
+handleOption(isProgram: boolean) {
+  this.option = isProgram;             // Set the dropdown label
+  this.isCoursesDropdownOpen = false; // Close the dropdown
 }
 
 }

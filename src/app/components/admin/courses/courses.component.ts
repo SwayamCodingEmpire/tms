@@ -105,6 +105,8 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
     });
   }
 
+
+  
   filterCourses() {
     this.currentPage = 1;
     const searchTerm = this.searchForm.get('searchTerm')?.value;
@@ -403,5 +405,13 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
     }
     this.initializeTooltips();
   }
+
+  hideTooltip(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    const tooltip = bootstrap.Tooltip.getInstance(target);
+    if (tooltip) {
+      tooltip.hide();
+    }
+}
 }
 
