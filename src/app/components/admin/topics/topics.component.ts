@@ -140,6 +140,8 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
       if (this.searchForm.get('searchTerm')?.value) {
         this.filterCourses();
       }
+
+      this.totalPages = Math.ceil(this.topics.length / this.pageSize);
     });
   }
 
@@ -202,12 +204,11 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
     // Create a temporary course object
     this.tempNewTopic = {
-      code: "",
       topicName: "",
       theoryTime: "",
       practiceTime: "",
       summary: "",
-      topics: []
+      content: ""
     };
 
     // Add the temporary course to the beginning of the array
@@ -218,12 +219,11 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
 
     // Reset the form with default values
     this.topicForm.reset({
-      code: "",
       topicName: "",
       theoryTime: "",
       practiceTime: "",
       summary: "",
-      topicsString: ""
+      content: "",
     });
 
     // Make sure we're on the first page to see the new row
@@ -503,7 +503,10 @@ totalPages = Math.ceil(this.topics.length / this.pageSize);
   }
 
   goToNextPage(): void {
+    console.log('Total pages:', this.totalPages);
     if (this.currentPage < this.totalPages) {
+      console.log('Current page before increment:', this.currentPage);
+      console.log('Total pages:', this.totalPages);
       this.currentPage++;
       // this.initializeTooltips();
     }

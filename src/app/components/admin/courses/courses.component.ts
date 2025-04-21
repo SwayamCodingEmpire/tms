@@ -101,6 +101,7 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
       if (this.searchForm.get('searchTerm')?.value) {
         this.filterCourses();
       }
+      this.totalPages = Math.ceil(this.courses.length / this.pageSize);
     });
   }
 

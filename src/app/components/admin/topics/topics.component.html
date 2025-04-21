@@ -216,9 +216,14 @@
                 style="max-width: 100px"
                 class="text-left px-3"
               >
-              <span
-                  >{{ i+1 }}</span
-                >
+              <ng-template #notAdding>
+                <span>{{ i + 1 + pageSize * (currentPage - 1) }}</span>
+              </ng-template>
+
+              <span *ngIf="isAddingNewTopic && editingIndex === i + pageSize * (currentPage - 1); else notAdding">
+                {{ topics.length + 1 }}
+              </span>
+
 
 
 
@@ -426,7 +431,7 @@
               >
                 {{
                   topicForm.get('content')?.value.length === 0
-                    ? 'Add Description'
+                    ? 'Add Content'
                     : topicForm.get('content')?.value
                 }}
               </span>
@@ -435,7 +440,6 @@
                  <button
                   (click)="showUploader = true"
                   style="background-color: transparent; border: none"
-                  [disabled]="isAddingNewTopic"
                 >
                 <i class="fas fa-arrow-up-from-bracket"></i>
                 </button>
@@ -445,9 +449,10 @@
     (click)="showFiles(i + pageSize * (currentPage - 1))"
     class="btn p-0 m-0 text-primary"
     [disabled]="isAddingNewTopic"
+    *ngIf = "course.files?.length > 0"
     style="background: none; border: none; font-size: 0.9rem; font-weight: 500;"
   >
-    + {{course.files.length}} Files
+    + {{course.files?.length}} Files
   </button>
 
             </td>

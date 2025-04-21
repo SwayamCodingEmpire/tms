@@ -21,6 +21,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FileUploadModalComponent } from './components/shared/file-upload-modal/file-upload-modal.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CustomMatPaginatorIntlService } from './services/shared/custom-mat-paginator-intl.service';
+import { ProgramsComponent } from './components/admin/programs/programs.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { CustomMatPaginatorIntlService } from './services/shared/custom-mat-pagi
     FooterComponent,
     TopicsComponent,
     CustomTooltipComponent,
-    FileUploadModalComponent
+    FileUploadModalComponent,
+    ProgramsComponent
   ],
   imports: [
     BrowserModule,
