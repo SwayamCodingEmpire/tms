@@ -6,11 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CourseServicesService {
-<<<<<<< HEAD
+
   private baseUrl = 'http://localhost:3000/courses';
-=======
-  private baseUrl ='http://localhost:3000/courses'; // Replace with your API endpoint
->>>>>>> 5f9c2e708651346ff1b01c92d277d78fd070027c
+ // Replace with your API endpoint
+
 
   constructor(private http:HttpClient) {
 
