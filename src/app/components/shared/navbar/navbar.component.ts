@@ -9,11 +9,35 @@ import { Component } from '@angular/core';
 export class NavbarComponent {
 
   isDropdownOpen = false;
+  userName: string = '';
+  userInitials: string = '';
+  option: boolean = false;
+
+  ngOnInit(): void {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      this.userName = user.user; // "user" key holds the full name
+
+      const nameParts = this.userName.trim().split(/\s+/);
+      let initials = '';
+      for (let i = 0; i < nameParts.length; i++) {
+        if (nameParts[i].length > 0) {
+          initials += nameParts[i][0].toUpperCase();
+        }
+      }
+      this.userInitials = initials;
+    }
+  }
+
+  checkOption()
+  {
+    this.option = !this.option;
+  }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
-
 
   closeDropdown(event: Event) {
     if (!(event.target as HTMLElement).closest('#userDropdown')) {
@@ -36,11 +60,5 @@ export class NavbarComponent {
 toggleCoursesDropdown() {
   this.isCoursesDropdownOpen = !this.isCoursesDropdownOpen;
 }
-
-  // closeDropdown(event: Event) {
-  //   if (!(event.target as HTMLElement).closest('#userDropdown')) {
-  //     this.isDropdownOpen = false;
-  //   }
-  // }
 
 }

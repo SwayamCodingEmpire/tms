@@ -1,47 +1,8 @@
-
-  .logo-overlay {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 250px;
-    opacity: 0.1;
-  }
-
-  /* Login Box (Glassmorphism Effect) */
-  .card {
-    width: 450px;
-    max-width: 90%;
-    background: rgba(15, 14, 23, 0.6) !important;
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Input Fields Styling */
-  .input-group-text {
-    background: rgba(0, 0, 0) !important;
-    border-left: none;
-  }
-
-  /* Password Eye Icon Click Effect */
-  .input-group-text:hover {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.9);
-  }
-
-  /* Login Button Hover Effect */
-  .btn-primary {
-    transition: all 0.3s ease-in-out;
-  }
-
-  .btn-primary:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
-  }
-
-  /* Text Enhancements */
-  .text-center {
-    letter-spacing: 2px;
-  }
-
-
+.container-fluid,
+.card,
+input,
+button,
+label,
+a {
+  font-family: 'Montserrat', sans-serif;
+}

@@ -12,11 +12,11 @@ import { FooterComponent } from './components/shared/footer/footer.component';
 import { LoginComponent } from './components/login/login.component';
 
 import { NgxPaginationModule } from 'ngx-pagination';
-import { CourseServicesService } from './services/admin/course-services.service';
+import { CourseServicesService } from './services/admin/course/course-services.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TopicsComponent } from './components/admin/topics/topics.component';
 import { CustomTooltipComponent } from './components/shared/custom-tooltip/custom-tooltip.component';
-import { TopicService } from './services/admin/topic.service';
+import { TopicService } from './services/admin/topics/topic.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FileUploadModalComponent } from './components/shared/file-upload-modal/file-upload-modal.component';
 import { MatPaginatorModule } from '@angular/material/paginator';

@@ -1,3 +1,4 @@
-.dropdown-toggle::after {
-  border-top-color: white !important;
+.dropdown-item:hover {
+  background-color: #3e5172 !important; /* A different color like blue or grey */
+  color: #fff !important;
 }

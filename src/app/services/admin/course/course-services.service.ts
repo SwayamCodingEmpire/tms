@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CourseServicesService {
-  private baseUrl = 'http://localhost:3000/courses';
+  private baseUrl = 'http://192.168.176.173:3000/courses';
 
   constructor(private http:HttpClient) {
 

@@ -1,85 +1,116 @@
-<nav class="navbar navbar-expand-lg navbar-dark px-3" style="background: #2e3c54;">
-  <!-- Logo & Name -->
+<nav class="navbar navbar-expand-lg navbar-dark px-3" style="background: #2e3c54;" (click)="closeDropdown($event)">
+  <!-- FontAwesome Icons -->
+
+  <!-- Logo -->
   <a class="navbar-brand d-flex align-items-center" href="#">
     <img src="https://www.cozentus.com/assets/images/footer-logo.webp" alt="Logo" height="25" class="me-2">
   </a>
 
   <!-- User Profile Dropdown (Right Side) -->
   <div class="ms-auto dropdown">
-    <button class="btn dropdown-toggle d-flex align-items-center dropdown-toggle-white" type="button" id="userDropdown"
-            (click)="toggleDropdown()">
-      <span class="rounded-circle d-inline-flex justify-content-center align-items-center me-2"
-            style="width: 36px; height: 36px; background-color: #e83e8c; color: white; font-weight: bold;">
-        SPM
-      </span>
-      <span class="text-white">Swayam Mohanty</span>
+    <button class="btn dropdown-toggle d-flex align-items-center" type="button" id="userDropdown"
+        (click)="toggleDropdown()" style="background: transparent; border: none;">
+        <span class="rounded-circle d-inline-flex justify-content-center align-items-center me-2"
+            style="width: 36px; height: 36px; background-color: #ff33cc; color: white; font-weight: bold; font-size: 14px;">
+            {{userInitials}}
+        </span>
+        <span class="text-white">{{userName}}</span>
+        <i class="fa-solid fa-chevron-down ms-3" style="font-size: 12px; color: white;"></i>
     </button>
 
-    <ul #dropdownMenu class="dropdown-menu dropdown-menu-end border-0 shadow-lg"
+    <ul #dropdownMenu class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2"
         [class.show]="isDropdownOpen"
-        style="background: #303c5c;">
-      <li>
-        <a class="dropdown-item text-white d-flex align-items-center" href="javascript:void(0)" (click)="changePassword()" style="transition: color 0.2s ease-in-out; --bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
+        style="background: #2e3c54; border-radius: 5px; min-width: 220px; right: 0;
+               box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3); padding: 5px;">
 
-          <i class="fa-thin fa-key me-2"></i> Change Password
-        </a>
-      </li>
-      <li>
-        <a class="dropdown-item text-white d-flex align-items-center" href="javascript:void(0)" (click)="signOut()" style="transition: color 0.2s ease-in-out; --bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
-          <i class="fa-thin fa-power-off me-2"></i> Sign Out
-        </a>
-      </li>
+        <li>
+            <a class="dropdown-item text-white d-flex align-items-center py-2" href="javascript:void(0)"
+               (click)="changePassword()" style="transition: background 0.2s ease-in-out;">
+                <i class="fa-thin fa-key me-3"></i> Change Password
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-white d-flex align-items-center py-2" href="javascript:void(0)"
+               (click)="signOut()" style="transition: background 0.2s ease-in-out;">
+                <i class="fa-thin fa-power-off me-3"></i> Sign Out
+            </a>
+        </li>
     </ul>
 </div>
 
 
+
 </nav>
 
-<div style="background: #2c3a52; padding:5px">
-  <ul class="nav nav-pills px-3" style="border-radius: 5px; padding: 3px; margin-bottom: 0;">
-    <!-- Courses Dropdown -->
-    <li class="nav-item dropdown">
-      <a class="nav-link text-white bg-white bg-opacity-25 px-3 py-2 rounded dropdown-toggle"
-         href="#" id="coursesDropdown" role="button"
-         (click)="toggleCoursesDropdown(); $event.preventDefault()">
-        <i class="fa-regular fa-file me-2"></i> Courses
-      </a>
+<!-- Navigation Menu -->
+<div style="background: #2c3a52; padding: 3px;" (click)="closeDropdown($event)">
+<ul class="nav nav-pills px-3" style="border-radius: 5px; padding: 3px; margin-bottom: 0;">
+  <!-- Courses Dropdown -->
+  <li class="nav-item dropdown" [class.show]="isCoursesDropdownOpen">
+    <a class="nav-link text-white d-flex align-items-center justify-content-between "
+       href="javascript:void(0)"
+       (click)="toggleCoursesDropdown()"
+       style="padding: 3px 15px; background-color: #3e5172; font-weight: 500; border-radius: 5px;">
+      <span *ngIf="option==false" class="me-4"><i class="fa-light fa-file me-2"></i> Courses</span>
+      <span *ngIf="option==true" class="me-4"><i class="fa-light fa-square-list me-2"></i> Programs</span>
+      <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: white;"></i>
+    </a>
+    <ul class="dropdown-menu border-0 shadow-lg mt-2" [class.show]="isCoursesDropdownOpen"
+        style="position: absolute; top: 100%; left: 0; right: 0; background: #2e3c54; border-radius: 5px; min-width: 220px;
+     box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3); padding: 5px;">
 
-      <ul class="dropdown-menu border-0 shadow"
-          [class.show]="isCoursesDropdownOpen"
-          aria-labelledby="coursesDropdown"
-          style="background-color: #303c5c;">
-        <li>
-          <a class="dropdown-item text-white d-flex align-items-center" href="#"
-             style="--bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
-            <i class="fa-regular fa-file me-2"></i> Courses
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-item text-white d-flex align-items-center" href="#"
-             style="--bs-dropdown-link-hover-bg: rgba(255,255,255,0.1);">
+
+      <li>
+        <a class="dropdown-item text-white d-flex align-items-center py-2" [routerLink]="'/courses'"  (click)="checkOption()"  (click)="toggleCoursesDropdown()" href="javascript:void(0)"
+            style="transition: background 0.2s ease-in-out;">
+            <i class="fa-light fa-file me-2"></i> Courses
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item text-white d-flex align-items-center py-2" href="javascript:void(0)" (click)="checkOption()" (click)="toggleCoursesDropdown()" [routerLink]="'/programs'"
+            style="transition: background 0.2s ease-in-out;">
             <i class="fa-light fa-square-list me-2"></i> Programs
-          </a>
-        </li>
-      </ul>
+        </a>
     </li>
+    </ul>
 
 
-    <li class="nav-item">
-      <a class="nav-link text-light">
-        <i class="fa-regular fa-user-group me-1"></i> Batch
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-light">
-        <i class="fa-regular fa-user me-1"></i> Teachers
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-light">
-        <i class="far fa-user-graduate me-1"></i> Students
-      </a>
-    </li>
-  </ul>
+
+  </li>
+
+  <!-- Other Tabs -->
+  <li class="nav-item">
+    <a class="nav-link text-light" href="#" style="padding: 3px 25px; font-weight: 300;">
+      <i class="fa-regular fa-user-group me-2"></i> Batch
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link text-light" href="#" style="padding: 3px 25px; font-weight: 300;">
+      <i class="fa-light fa-user me-2"></i> Teachers
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link text-light" href="#" style="padding: 3px 25px; font-weight: 300;">
+      <i class="fa-light fa-user-graduate me-2"></i> Students
+    </a>
+  </li>
+</ul>
 </div>
 
+
+
+<style>
+/* Apply Creata Light Font */
+body, nav, .nav, .nav-item, .nav-link, .dropdown-item, .btn, span, a {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 14px;
+
+}
+
+
+
+/* Hide Dropdown Arrow */
+#userDropdown::after {
+    display: none !important;
+}
+</style>

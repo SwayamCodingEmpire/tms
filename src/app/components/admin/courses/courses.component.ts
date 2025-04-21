@@ -1,6 +1,6 @@
 import { Component, Renderer2 } from '@angular/core';
 import * as bootstrap from 'bootstrap';
-import { CourseServicesService } from '../../../services/admin/course-services.service';
+import { CourseServicesService } from '../../../services/admin/course/course-services.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -121,6 +121,7 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
         course.topics.some((topic: string) => topic.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
+    this.initializeTooltips();
   }
 
 
@@ -133,6 +134,18 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
   // goToLastPage() {
   //   this.currentPage = this.totalPages;
   // }
+
+  initializeTooltips() {
+    // Destroy existing tooltips
+    const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    existingTooltips.forEach(el => bootstrap.Tooltip.getInstance(el)?.dispose());
+
+    // Initialize new tooltips
+    setTimeout(() => {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    }, 0);
+  }
 
   previousPage() {
     if (this.currentPage > 1) {
@@ -182,6 +195,7 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
 
     // Make sure we're on the first page to see the new row
     this.currentPage = 1;
+    this.initializeTooltips();
   }
 
   sortTable(column: string, ascending: boolean) {
@@ -364,14 +378,14 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
   goToNextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      // this.initializeTooltips();
+      this.initializeTooltips();
     }
   }
 
   goToPreviousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      // this.initializeTooltips();
+      this.initializeTooltips();
     }
   }
 
@@ -387,7 +401,7 @@ totalPages = Math.ceil(this.courses.length / this.pageSize);
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages || 1;
     }
-    // this.initializeTooltips();
+    this.initializeTooltips();
   }
 }
 

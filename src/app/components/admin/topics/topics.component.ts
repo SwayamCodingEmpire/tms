@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
-import { TopicService } from '../../../services/admin/topic.service';
+import { TopicService } from '../../../services/admin/topics/topic.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
