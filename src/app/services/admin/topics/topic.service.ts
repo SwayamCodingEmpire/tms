@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TopicService {
-  private baseUrl = 'http://192.168.176.173:3000/topics';
+  private baseUrl = 'http://localhost:3000/topics';
 
   constructor(private http: HttpClient) { }
 
