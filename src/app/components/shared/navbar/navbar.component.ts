@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-navbar',
@@ -8,13 +11,27 @@ import { Router } from '@angular/router';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
-  constructor(private router : Router) { }
+
   isDropdownOpen = false;
   userName: string = '';
   userInitials: string = '';
   option: boolean = false;
 
-  
+  constructor(private router: Router) {
+    // Subscribe to router events to detect route changes
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      // Check if current route is programs
+      if (event.url === '/programs') {
+        this.option = true;
+      } else if (event.url === '/courses') {
+        this.option = false;
+      }
+    });
+  }
+
+
 
   ngOnInit(): void {
     const storedUser = localStorage.getItem('user');
@@ -30,6 +47,13 @@ export class NavbarComponent {
         }
       }
       this.userInitials = initials;
+    }
+
+    // Check initial route
+    if (this.router.url === '/programs') {
+      this.option = true;
+    } else if (this.router.url === '/courses') {
+      this.option = false;
     }
   }
 
@@ -55,13 +79,14 @@ export class NavbarComponent {
     // Clear the session or any login-related data
     localStorage.removeItem('loggedIn'); // Remove login status
     localStorage.removeItem('authToken'); // If you're using a token (optional)
-  
+
     // Navigate to the login page
     this.router.navigate(['/login']);
   }
-  
+
 
   isCoursesDropdownOpen = false;
+
 
 toggleCoursesDropdown() {
   this.isCoursesDropdownOpen = !this.isCoursesDropdownOpen;
