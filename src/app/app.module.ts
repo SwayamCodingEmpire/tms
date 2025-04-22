@@ -22,6 +22,8 @@ import { FileUploadModalComponent } from './components/shared/file-upload-modal/
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CustomMatPaginatorIntlService } from './services/shared/custom-mat-paginator-intl.service';
 import { ProgramsComponent } from './components/admin/programs/programs.component';
+import { TeacherComponent } from './components/admin/teacher/teacher/teacher.component';
+import { TeacherService } from './services/admin/teacher/teacher.service';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { ProgramsComponent } from './components/admin/programs/programs.componen
     TopicsComponent,
     CustomTooltipComponent,
     FileUploadModalComponent,
-    ProgramsComponent
+    ProgramsComponent,
+    TeacherComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +54,7 @@ import { ProgramsComponent } from './components/admin/programs/programs.componen
       preventDuplicates: true
     })
   ],
-  providers: [CourseServicesService, TopicService, CustomMatPaginatorIntlService],
+  providers: [CourseServicesService, TopicService, CustomMatPaginatorIntlService,TeacherService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -588,5 +588,57 @@
       "content": "sg",
       "topics": []
     }
+  ],
+  "teachers":[
+    {
+      "teacherName": "Neha Samal",
+      "courseAssigned": "Kinjal Agarwal",
+      "emailid": "neha@cozentus.com"
+    },
+    {
+      "teacherName": "Kinjal Agarwal",
+      "courseAssigned": "PHP Basics, Data Visualisation",
+      "emailid": "kinjal@cozentus.com"
+    },
+    {
+      "teacherName": "Sumita Patil",
+      "courseAssigned": "Meta, Dashboards +1 more",
+      "emailid": "sumita@cozentus.com"
+    },
+    {
+      "teacherName": "Mahesh Varma",
+      "courseAssigned": "XML",
+      "emailid": "mahesh@cozentus.com"
+    },
+    {
+      "teacherName": "Sahil Jain",
+      "courseAssigned": "Excel to my SQL, Java Script",
+      "emailid": "sahil@cozentus.com"
+    },
+    {
+      "teacherName": "Nilesh Gupta",
+      "courseAssigned": "Machine Learning",
+      "emailid": "nilesh@cozentus.com"
+    },
+    {
+      "teacherName": "Ravi Shah",
+      "courseAssigned": "PHP Basics, Data Visualisation",
+      "emailid": "ravi@cozentus.com"
+    },
+    {
+      "teacherName": "Komal Patel",
+      "courseAssigned": "Meta, Dashboards +1 more",
+      "emailid": "komal@cozentus.com"
+    },
+    {
+      "teacherName": "Vipul Joshi",
+      "courseAssigned": "XML",
+      "emailid": "vipul@cozentus.com"
+    },
+    {
+      "teacherName": "Ketan Patel",
+      "courseAssigned": "Machine Learning",
+      "emailid": "ketan@cozentus.com"
+    }
   ]
 }
