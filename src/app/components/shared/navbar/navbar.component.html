@@ -51,27 +51,21 @@
        href="javascript:void(0)"
        (click)="toggleCoursesDropdown()"
        style="padding: 3px 15px; background-color: #3e5172; font-weight: 500; border-radius: 5px;">
-<<<<<<< HEAD
-      
+
       <!-- Dynamic label -->
       <span class="me-4">
         <i class="me-2" [ngClass]="option ? 'fa-light fa-square-list' : 'fa-light fa-file'"></i>
         {{ option ? 'Programs' : 'Courses' }}
       </span>
-  
-=======
-      <span *ngIf="!option" class="me-4"><i class="fa-light fa-file me-2"></i> Courses</span>
-      <span *ngIf="option" class="me-4"><i class="fa-light fa-square-list me-2"></i> Programs</span>
->>>>>>> feature/mohit
+
       <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: white;"></i>
     </a>
-  
+
     <ul class="dropdown-menu border-0 shadow-lg mt-2" [class.show]="isCoursesDropdownOpen"
         style="position: absolute; top: 100%; left: 0; right: 0; background: #2e3c54; border-radius: 5px; min-width: 220px;
        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3); padding: 5px;">
-  
+
       <li>
-<<<<<<< HEAD
         <a class="dropdown-item text-white d-flex align-items-center py-2"
            href="javascript:void(0)"
            [routerLink]="'/courses'"
@@ -79,29 +73,18 @@
            <i class="fa-light fa-file me-2"></i> Courses
         </a>
       </li>
-  
+
       <li>
         <a class="dropdown-item text-white d-flex align-items-center py-2"
            href="javascript:void(0)"
            [routerLink]="'/programs'"
            (click)="handleOption(true)">
            <i class="fa-light fa-square-list me-2"></i> Programs
-=======
-        <a class="dropdown-item text-white d-flex align-items-center py-2" [routerLink]="'/courses'" (click)="toggleCoursesDropdown()" href="javascript:void(0)"
-            style="transition: background 0.2s ease-in-out;">
-            <i class="fa-light fa-file me-2"></i> Courses
-        </a>
-    </li>
-    <li>
-        <a class="dropdown-item text-white d-flex align-items-center py-2" href="javascript:void(0)" (click)="toggleCoursesDropdown()" [routerLink]="'/programs'"
-            style="transition: background 0.2s ease-in-out;">
-            <i class="fa-light fa-square-list me-2"></i> Programs
->>>>>>> feature/mohit
         </a>
       </li>
     </ul>
   </li>
-  
+
 
   <!-- Other Tabs -->
   <li class="nav-item">
