@@ -149,22 +149,9 @@
                 <div *ngIf="editingIndex === i + (pageSize * (currentPage - 1))" class="d-inline-block">
                   <div
                     (click)="openTopicsModal(i + (pageSize * (currentPage - 1)), $event)"
-                    style="
-                      cursor: pointer;
-                      display: inline-block;
-                      width: auto;
-                      max-width: 100%;
-                      min-height: 20px;
-                      padding: 2px 6px;
-                      font-size: 13px;
-                      line-height: 1.6;
-                      background-color: white;
-                      border: 1px solid #ced4da;
-                      border-radius: 0.25rem;
-                      white-space: nowrap;
-                    "
+                    class="topic-selector"
                   >
-                    <span *ngIf="editableCourse.topics?.length > 0" class="ms-1">
+                    <span *ngIf="editableCourse.topics?.length > 0" class="ms-1" style="cursor: pointer; width: 10px;">
                       <span *ngFor="let topic of editableCourse.topics.slice(0, 2); let last = last">
                         {{ topic }}{{ last && editableCourse.topics.length <= 2 ? '' : ', ' }}
                       </span>
@@ -174,7 +161,7 @@
                       >
                         +{{ editableCourse.topics.length - 2 }} more
                       </span>
-                      <span class="ms-2 me-2">
+                      <span class="dropdown-icon">
                         <i class="fa-regular fa-chevron-down"></i>
                       </span>
                     </span>
@@ -243,43 +230,53 @@
 
 <!-- Topic Edit Modal -->
 <div #topicEditModal class="topic-edit-popup shadow"
-     style="display: block; position: absolute; z-index: 1050; background-color: white; border: 1px solid #ccc; border-radius: 0.25rem;"
+     *ngIf="showTopicModal"
      [style.top.px]="topicModalTop"
      [style.left.px]="topicModalLeft"
      [style.width.px]="topicModalWidth"
-     *ngIf="showTopicModal"
-     (click)="$event.stopPropagation()" >
-    <div class="modal-content border-0"> <div class="modal-header p-2">
-        <input type="text" class="form-control form-control-sm"
-               placeholder="Search topics"
-               [(ngModel)]="topicSearchTerm"
-               (input)="filterTopics()">
-
-
-        <button
-          type="button"
-          class="btn-close custom position-absolute end-0 top-0 m-3"
-          data-bs-dismiss="modal"
-          (click) = "closeTopicModal()"
-          aria-label="Close">
-        </button>
+     (click)="$event.stopPropagation()">
+    <div class="modal-content border-0"> 
+      <div class="modal-header p-2">
+        <div class="d-flex align-items-center w-100">
+          <!-- Select All Checkbox -->
+          <div class="me-2 d-flex align-items-center justify-content-center" style="min-width: 24px;">
+            <input type="checkbox" class="form-check-input" 
+                   [checked]="isAllSelected()"
+                   (change)="toggleSelectAll()"
+                   id="selectAllTopics">
+          </div>
+          <!-- Search Field -->
+          <input type="text" class="form-control form-control-sm"
+                 placeholder="Search"
+                 [(ngModel)]="topicSearchTerm"
+                 (input)="filterTopics()">
+          
+          <!-- Close button moved inline with search -->
+          <button
+            type="button"
+            class="btn-close custom ms-2"
+            data-bs-dismiss="modal"
+            (click)="closeTopicModal(); saveTopics()"
+            aria-label="Close">
+          </button>
         </div>
+      </div>
       <div class="modal-body p-0">
-        <div class="topics-list" style="max-height: 200px; overflow-y: auto;"> <div *ngIf="filteredTopics.length === 0" class="p-2 text-muted text-center">
+        <div class="topics-list"> 
+           <div *ngIf="filteredTopics.length === 0" class="p-2 text-muted text-center">
                No topics found.
            </div>
            <div *ngFor="let topic of filteredTopics"
-               class="d-flex align-items-center p-2 border-bottom hover-bg-light"
-               style="cursor: pointer;"
+               class="d-flex align-items-center p-2 hover-bg-light"
+               [ngClass]="{'selected-topic': selectedTopics[topic]}"
+               style="cursor: pointer; height: 30px;"
                (click)="toggleTopicSelection(topic)">
-            <input type="checkbox" class="form-check-input me-2"
+               <input type="checkbox" class="form-check-input me-2"
                    [checked]="selectedTopics[topic]"
-                   tabindex="-1"> <span>{{ topic }}</span>
+                   tabindex="-1"> 
+               <span>{{ topic }}</span>
           </div>
         </div>
-      </div>
-      <div class="modal-footer p-2 border-top">
-        <button class="btn btn-primary btn-sm" (click)="saveTopics()">Save</button>
       </div>
     </div>
 </div>

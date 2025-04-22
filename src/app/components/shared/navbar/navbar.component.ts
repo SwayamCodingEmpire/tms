@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +14,20 @@ export class NavbarComponent {
   userName: string = '';
   userInitials: string = '';
   option: boolean = false;
+  
+  constructor(private router: Router) {
+    // Subscribe to router events to detect route changes
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      // Check if current route is programs
+      if (event.url === '/programs') {
+        this.option = true;
+      } else if (event.url === '/courses') {
+        this.option = false;
+      }
+    });
+  }
 
   ngOnInit(): void {
     const storedUser = localStorage.getItem('user');
@@ -27,6 +43,13 @@ export class NavbarComponent {
         }
       }
       this.userInitials = initials;
+    }
+    
+    // Check initial route
+    if (this.router.url === '/programs') {
+      this.option = true;
+    } else if (this.router.url === '/courses') {
+      this.option = false;
     }
   }
 
@@ -57,8 +80,7 @@ export class NavbarComponent {
 
   isCoursesDropdownOpen = false;
 
-toggleCoursesDropdown() {
-  this.isCoursesDropdownOpen = !this.isCoursesDropdownOpen;
-}
-
+  toggleCoursesDropdown() {
+    this.isCoursesDropdownOpen = !this.isCoursesDropdownOpen;
+  }
 }

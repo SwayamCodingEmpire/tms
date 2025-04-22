@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import * as bootstrap from 'bootstrap';
 
 @Component({
@@ -55,6 +55,18 @@ export class ProgramsComponent {
   tempEditingIndex: number | null = null;
 
   @ViewChild('descriptionPopup') descriptionPopup!: ElementRef;
+  @ViewChild('topicEditModal') topicEditModal!: ElementRef;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // If the modal is shown and the click is outside the modal, close it and save
+    if (this.showTopicModal) {
+      if (this.topicEditModal && !this.topicEditModal.nativeElement.contains(event.target)) {
+        this.saveTopics();
+        this.closeTopicModal();
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.calculateTotalPages();
@@ -93,38 +105,40 @@ export class ProgramsComponent {
   }
 
   openTopicsModal(index: number, event: MouseEvent): void {
+    // Stop propagation to prevent document:click from immediately closing the modal
+    event.stopPropagation();
+    
     this.tempEditingIndex = index;
-    const course = this.courses[index];
-    const triggerElement = event.currentTarget as HTMLElement;
-    const recta = triggerElement.getBoundingClientRect();
-
-    this.topicModalTop = recta.bottom + window.scrollY;
-    this.topicModalLeft = recta.left + window.scrollX;
-    this.topicModalWidth = recta.width;
-
+    
+    // Reset selection states based on the course being edited
     this.selectedTopics = {};
-    course.topics.forEach((topic: string) => {
-      this.selectedTopics[topic] = true;
-    });
-
+    if (this.editableCourse && this.editableCourse.topics) {
+      this.editableCourse.topics.forEach((topic: string) => {
+        this.selectedTopics[topic] = true;
+      });
+    }
+    
     this.topicSearchTerm = '';
     this.filterTopics();
 
     const target = event.target as HTMLElement;
     const rect = target.getBoundingClientRect();
-    this.modalWidth = rect.width;
-    this.modalPosition = {
-      top: rect.bottom + window.scrollY,
-      left: rect.left + window.scrollX
-    };
+    
+    // Increase the modal width from 250px to 300px
+    this.topicModalWidth = 300;
+    this.topicModalTop = rect.bottom + window.scrollY;
+    this.topicModalLeft = rect.left + window.scrollX;
 
     this.showTopicModal = true;
     this.initializeTooltips();
   }
 
   closeTopicModal(): void {
-    this.showTopicModal = false;
-    this.initializeTooltips();
+    // Only close if the modal is showing (to prevent redundant calls)
+    if (this.showTopicModal) {
+      this.showTopicModal = false;
+      this.initializeTooltips();
+    }
   }
 
   saveTopics(): void {
@@ -216,7 +230,7 @@ export class ProgramsComponent {
 
   addRow(): void {
     this.isAdd = true;
-    this.editingIndex = this.courses.length;
+    this.editingIndex = 0;
     this.editableCourse = {
       id: (this.courses.length + 1).toString(),
       code: '',
@@ -226,9 +240,13 @@ export class ProgramsComponent {
       description: '',
       topics: []
     };
-    this.courses.push({...this.editableCourse});
+    
+    // Initialize selectedTopics when adding new program
+    this.selectedTopics = {};
+    
+    this.courses.unshift({...this.editableCourse});
     this.calculateTotalPages();
-    this.currentPage = this.totalPages;
+    this.currentPage = 1;
     this.initializeTooltips();
   }
 
@@ -340,6 +358,23 @@ export class ProgramsComponent {
   updatePagination(): void {
     this.currentPage = 1;
     this.calculateTotalPages();
+    this.initializeTooltips();
+  }
+
+  isAllSelected(): boolean {
+    if (this.filteredTopics.length === 0) return false;
+    
+    return this.filteredTopics.every(topic => this.selectedTopics[topic]);
+  }
+
+  toggleSelectAll(): void {
+    const allSelected = this.isAllSelected();
+    
+    this.filteredTopics.forEach(topic => {
+      this.selectedTopics[topic] = !allSelected;
+    });
+    
+    this.updateEditableTopics();
     this.initializeTooltips();
   }
 
