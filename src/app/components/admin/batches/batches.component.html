@@ -1,0 +1,196 @@
+<div class="batch-container" [formGroup]="rootForm">
+  <!-- Header -->
+  <div class="header d-flex justify-content-between align-items-center mb-3">
+    <h2>Batch</h2>
+    <div>
+      <button class="btn btn-outline-primary mr-2" (click)="addBatch()">
+        Add Batch
+      </button>
+      <button class="btn btn-outline-secondary" (click)="refresh()">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <input class="form-control mb-3" placeholder="Search" />
+
+  <!-- Nested Table -->
+  <table class="table nested-table mb-0">
+    <thead>
+      <tr class="batch-row">
+        <th>Actions</th>
+        <th>Batch code</th>
+        <th>Batch Name</th>
+        <th>Batch Start Date</th>
+      </tr>
+    </thead>
+    <tbody formArrayName="batches">
+
+      <ng-container *ngFor="let batch of batches.controls; let bi = index" [formGroupName]="bi">
+        <!-- Batch Edit Mode -->
+        <tr class="batch-form-row" *ngIf="batch.get('editing')!.value">
+          <td colspan="4">
+            <form class="form-inline">
+              <input
+                formControlName="batchCode"
+                class="form-control form-control-sm mr-2"
+                placeholder="Code"
+              />
+              <input
+                formControlName="batchName"
+                class="form-control form-control-sm mr-2"
+                placeholder="Name"
+              />
+              <input
+                formControlName="batchStartDate"
+                type="date"
+                class="form-control form-control-sm mr-2"
+              />
+              <button class="btn btn-sm btn-success mr-1" (click)="saveBatch(bi)">✔</button>
+              <button class="btn btn-sm btn-secondary" (click)="removeBatch(bi)">✖</button>
+            </form>
+          </td>
+        </tr>
+
+        <!-- Batch View Mode -->
+        <tr class="batch-row" *ngIf="!batch.get('editing')!.value">
+          <td>
+            <button class="btn btn-link" (click)="editBatch(bi)"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-link" (click)="removeBatch(bi)"><i class="fas fa-trash"></i></button>
+            <button class="btn btn-link" (click)="addProgram(bi)"><i class="fas fa-plus"></i></button>
+          </td>
+          <td>{{ batch.value.batchCode }}</td>
+          <td>{{ batch.value.batchName }}</td>
+          <td>{{ batch.value.batchStartDate | date:'dd MMM yyyy' }}</td>
+        </tr>
+
+        <!-- Programs Header -->
+        <tr *ngIf="programs(bi).length" class="program-header">
+          <th>Actions</th>
+          <th>Code</th>
+          <th>Program Name</th>
+          <th>Students</th>
+        </tr>
+
+        <!-- Programs -->
+        <ng-container formArrayName="programs">
+          <ng-container *ngFor="let prog of programs(bi).controls; let pi = index" [formGroupName]="pi">
+
+            <!-- Program Edit Mode -->
+            <tr class="program-form-row" *ngIf="prog.get('editing')!.value">
+              <td colspan="4">
+                <form class="form-inline">
+                  <input
+                    formControlName="programCode"
+                    class="form-control form-control-sm mr-2"
+                    placeholder="Code"
+                  />
+                  <input
+                    formControlName="programName"
+                    class="form-control form-control-sm mr-2"
+                    placeholder="Name"
+                  />
+                  <select
+                    multiple
+                    class="form-control form-control-sm mr-2"
+                    (change)="onStudentSelect($event, bi, pi)"
+                  >
+                    <option *ngFor="let s of studentsList" [value]="s">{{ s }}</option>
+                  </select>
+                  <button class="btn btn-sm btn-success mr-1" (click)="saveProgram(bi, pi)">✔</button>
+                  <button class="btn btn-sm btn-secondary" (click)="removeProgram(bi, pi)">✖</button>
+                </form>
+              </td>
+            </tr>
+
+            <!-- Program View Mode -->
+            <tr class="program-row" *ngIf="!prog.get('editing')!.value">
+              <td>
+                <button class="btn btn-link" (click)="editProgram(bi, pi)"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-link" (click)="removeProgram(bi, pi)"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-link" (click)="addCourse(bi, pi)"><i class="fas fa-plus"></i></button>
+              </td>
+              <td>{{ prog.value.programCode }}</td>
+              <td>{{ prog.value.programName }}</td>
+              <td>{{ prog.value.students.join(', ') }}</td>
+            </tr>
+
+            <!-- Courses Header -->
+            <tr *ngIf="courses(bi,pi).length" class="course-header">
+              <th>Actions</th>
+              <th>Code</th>
+              <th>Course Name</th>
+              <th>Teacher</th>
+            </tr>
+
+            <!-- Courses -->
+            <ng-container formArrayName="courses">
+              <ng-container *ngFor="let course of courses(bi,pi).controls; let ci = index" [formGroupName]="ci">
+
+                <!-- Course Edit Mode -->
+                <tr class="course-form-row" *ngIf="course.get('editing')!.value">
+                  <td colspan="4">
+                    <form class="form-inline">
+                      <input
+                        formControlName="courseCode"
+                        class="form-control form-control-sm mr-2"
+                        placeholder="Code"
+                      />
+                      <select
+                        formControlName="courseName"
+                        class="form-control form-control-sm mr-2"
+                      >
+                        <option *ngFor="let c of coursesList" [value]="c">{{ c }}</option>
+                      </select>
+                      <select
+                        formControlName="teacher"
+                        class="form-control form-control-sm mr-2"
+                      >
+                        <option *ngFor="let t of teachersList" [value]="t">{{ t }}</option>
+                      </select>
+                      <button
+                        class="btn btn-sm btn-success mr-1"
+                        (click)="saveCourse(bi, pi, ci)"
+                      >✔</button>
+                      <button
+                        class="btn btn-sm btn-secondary"
+                        (click)="removeCourse(bi, pi, ci)"
+                      >✖</button>
+                    </form>
+                  </td>
+                </tr>
+
+                <!-- Course View Mode -->
+                <tr class="course-row" *ngIf="!course.get('editing')!.value">
+                  <td>
+                    <button
+                      class="btn btn-link"
+                      (click)="editCourse(bi, pi, ci)"
+                    ><i class="fas fa-edit"></i></button>
+                    <button
+                      class="btn btn-link"
+                      (click)="removeCourse(bi, pi, ci)"
+                    ><i class="fas fa-trash"></i></button>
+                  </td>
+                  <td>{{ course.value.courseCode }}</td>
+                  <td>{{ course.value.courseName }}</td>
+                  <td>{{ course.value.teacher }}</td>
+                </tr>
+
+              </ng-container>
+            </ng-container>
+
+          </ng-container>
+        </ng-container>
+
+      </ng-container>
+    </tbody>
+  </table>
+
+  <div class="mt-3 text-muted">
+    Showing {{ batches.length }} batches
+  </div>
+  <hr />
+  <div class="text-center text-muted">© 2023 Cozentus</div>
+</div>

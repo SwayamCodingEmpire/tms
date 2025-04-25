@@ -22,6 +22,7 @@ import { FileUploadModalComponent } from './components/shared/file-upload-modal/
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CustomMatPaginatorIntlService } from './services/shared/custom-mat-paginator-intl.service';
 import { ProgramsComponent } from './components/admin/programs/programs.component';
+import { BatchesComponent } from './components/admin/batches/batches.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ProgramsComponent } from './components/admin/programs/programs.componen
     TopicsComponent,
     CustomTooltipComponent,
     FileUploadModalComponent,
-    ProgramsComponent
+    ProgramsComponent,
+    BatchesComponent
   ],
   imports: [
     BrowserModule,

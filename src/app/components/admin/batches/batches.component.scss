@@ -1,0 +1,73 @@
+.batch-container {
+  background: #f5f8fa;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.nested-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+// Batch row style
+.batch-row {
+  background-color: #e6f4ff;
+  color: #000;
+  th, td {
+    vertical-align: middle;
+  }
+}
+
+// Batch edit form row
+.batch-form-row {
+  background-color: #eef6fa;
+}
+
+// Program header & rows
+.program-header,
+.program-row {
+  background-color: #dceeff;
+  color: #000;
+
+  th, td {
+    vertical-align: middle;
+  }
+}
+
+.program-form-row {
+  background-color: #f4faff;
+}
+
+// Course header & rows
+.course-header {
+  background-color: #eaeaea;
+  th, td {
+    vertical-align: middle;
+  }
+}
+
+.course-row {
+  background-color: #ffffff;
+}
+
+.course-form-row {
+  background-color: #f7f7f7;
+}
+
+// Inline form adjustments
+form.form-inline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .form-control-sm {
+    height: calc(1.5em + .5rem + 2px);
+  }
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+  }
+}
