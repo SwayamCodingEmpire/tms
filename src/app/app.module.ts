@@ -23,6 +23,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { CustomMatPaginatorIntlService } from './services/shared/custom-mat-paginator-intl.service';
 import { ProgramsComponent } from './components/admin/programs/programs.component';
 import { BatchesComponent } from './components/admin/batches/batches.component';
+import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { BatchesComponent } from './components/admin/batches/batches.component';
     CustomTooltipComponent,
     FileUploadModalComponent,
     ProgramsComponent,
-    BatchesComponent
+    BatchesComponent,
+    AdminLayoutComponent
   ],
   imports: [
     BrowserModule,

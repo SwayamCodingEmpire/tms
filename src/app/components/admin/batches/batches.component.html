@@ -1,196 +1,361 @@
-<div class="batch-container" [formGroup]="rootForm">
-  <!-- Header -->
-  <div class="header d-flex justify-content-between align-items-center mb-3">
-    <h2>Batch</h2>
-    <div>
-      <button class="btn btn-outline-primary mr-2" (click)="addBatch()">
-        Add Batch
-      </button>
-      <button class="btn btn-outline-secondary" (click)="refresh()">
-        <i class="fas fa-sync-alt"></i>
+<div class="container-fluid px-4" style="background-color: #e9f3f9; min-height: 88vh">
+  <div class="row mb-3 align-items-center">
+    <div class="col">
+      <label class="mt-3">Batches</label>
+    </div>
+    <div class="col" style="display: flex; justify-content: flex-end">
+      <button
+        style="
+          border: none;
+          background-color: #ffffff;
+          box-shadow: black;
+          border-radius: 5px;
+          width: 35px;
+        "
+        class="mt-3"
+        (click)="refresh()"
+      >
+        <i
+          class="fa-solid fa-rotate-right mt-2 mb-2"
+          style="color: #2f72f4; font: 20px"
+        ></i>
       </button>
     </div>
   </div>
 
-  <!-- Search -->
-  <input class="form-control mb-3" placeholder="Search" />
+  <div class="card shadow-sm p-3" style="box-shadow: black; border: none" [formGroup]="rootForm">
+    <div class="card-body">
+      <div class="mb-3 d-flex align-items-center justify-content-between">
+        <!-- Search Field -->
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search"
+          style="width: 280px"
+        />
 
-  <!-- Nested Table -->
-  <table class="table nested-table mb-0">
-    <thead>
-      <tr class="batch-row">
-        <th>Actions</th>
-        <th>Batch code</th>
-        <th>Batch Name</th>
-        <th>Batch Start Date</th>
-      </tr>
-    </thead>
-    <tbody formArrayName="batches">
+        <button
+          class="btn"
+          style="
+            border-radius: 5px;
+            border-color: #000000;
+            width: 150px;
+            justify-content: right;
+          "
+          (click)="addBatch()"
+        >
+          Add Batch
+        </button>
+      </div>
 
-      <ng-container *ngFor="let batch of batches.controls; let bi = index" [formGroupName]="bi">
-        <!-- Batch Edit Mode -->
-        <tr class="batch-form-row" *ngIf="batch.get('editing')!.value">
-          <td colspan="4">
-            <form class="form-inline">
-              <input
-                formControlName="batchCode"
-                class="form-control form-control-sm mr-2"
-                placeholder="Code"
-              />
-              <input
-                formControlName="batchName"
-                class="form-control form-control-sm mr-2"
-                placeholder="Name"
-              />
-              <input
-                formControlName="batchStartDate"
-                type="date"
-                class="form-control form-control-sm mr-2"
-              />
-              <button class="btn btn-sm btn-success mr-1" (click)="saveBatch(bi)">✔</button>
-              <button class="btn btn-sm btn-secondary" (click)="removeBatch(bi)">✖</button>
-            </form>
-          </td>
-        </tr>
+      <div
+        *ngIf="!batches.length"
+        class="d-flex justify-content-start align-items-center"
+        style="
+          height: 40px;
+          background-color: #f8fbff;
+          border-radius: 5px;
+          border: none;
+        "
+      >
+        <span class="px-3 fw-semibold text-dark"
+          >Please add a batch to see content</span
+        >
+      </div>
 
-        <!-- Batch View Mode -->
-        <tr class="batch-row" *ngIf="!batch.get('editing')!.value">
-          <td>
-            <button class="btn btn-link" (click)="editBatch(bi)"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-link" (click)="removeBatch(bi)"><i class="fas fa-trash"></i></button>
-            <button class="btn btn-link" (click)="addProgram(bi)"><i class="fas fa-plus"></i></button>
-          </td>
-          <td>{{ batch.value.batchCode }}</td>
-          <td>{{ batch.value.batchName }}</td>
-          <td>{{ batch.value.batchStartDate | date:'dd MMM yyyy' }}</td>
-        </tr>
-
-        <!-- Programs Header -->
-        <tr *ngIf="programs(bi).length" class="program-header">
-          <th>Actions</th>
-          <th>Code</th>
-          <th>Program Name</th>
-          <th>Students</th>
-        </tr>
-
-        <!-- Programs -->
-        <ng-container formArrayName="programs">
-          <ng-container *ngFor="let prog of programs(bi).controls; let pi = index" [formGroupName]="pi">
-
-            <!-- Program Edit Mode -->
-            <tr class="program-form-row" *ngIf="prog.get('editing')!.value">
-              <td colspan="4">
-                <form class="form-inline">
-                  <input
-                    formControlName="programCode"
-                    class="form-control form-control-sm mr-2"
-                    placeholder="Code"
-                  />
-                  <input
-                    formControlName="programName"
-                    class="form-control form-control-sm mr-2"
-                    placeholder="Name"
-                  />
-                  <select
-                    multiple
-                    class="form-control form-control-sm mr-2"
-                    (change)="onStudentSelect($event, bi, pi)"
+      <div class="table-responsive mt-2">
+        <table class="table table-borderless table-responsive">
+          <thead>
+            <tr>
+              <th style="background: #f8fbff">Actions</th>
+              <th style="background: #f8fbff">
+                <div class="d-flex flex-row align-items-center">
+                  Batch Code
+                  <div
+                    class="d-flex flex-column align-items-center ms-2"
+                    style="font-size: x-small"
                   >
-                    <option *ngFor="let s of studentsList" [value]="s">{{ s }}</option>
-                  </select>
-                  <button class="btn btn-sm btn-success mr-1" (click)="saveProgram(bi, pi)">✔</button>
-                  <button class="btn btn-sm btn-secondary" (click)="removeProgram(bi, pi)">✖</button>
-                </form>
-              </td>
+                    <i class="fas fa-chevron-up"></i>
+                    <i class="fas fa-chevron-down"></i>
+                  </div>
+                </div>
+              </th>
+              <th style="background: #f8fbff">
+                <div class="d-flex flex-row align-items-center">
+                  Batch Name
+                  <div
+                    class="d-flex flex-column align-items-center ms-2"
+                    style="font-size: x-small"
+                  >
+                    <i class="fas fa-chevron-up"></i>
+                    <i class="fas fa-chevron-down"></i>
+                  </div>
+                </div>
+              </th>
+              <th style="background: #f8fbff">Batch Start Date</th>
             </tr>
+          </thead>
 
-            <!-- Program View Mode -->
-            <tr class="program-row" *ngIf="!prog.get('editing')!.value">
-              <td>
-                <button class="btn btn-link" (click)="editProgram(bi, pi)"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-link" (click)="removeProgram(bi, pi)"><i class="fas fa-trash"></i></button>
-                <button class="btn btn-link" (click)="addCourse(bi, pi)"><i class="fas fa-plus"></i></button>
-              </td>
-              <td>{{ prog.value.programCode }}</td>
-              <td>{{ prog.value.programName }}</td>
-              <td>{{ prog.value.students.join(', ') }}</td>
-            </tr>
+          <tbody formArrayName="batches">
+            <ng-container *ngFor="let batch of batches.controls; let bi = index" [formGroupName]="bi">
+              <!-- Batch Edit Mode -->
+              <tr *ngIf="batch.get('editing')!.value">
+                <td colspan="4">
+                  <div class="d-flex align-items-center">
+                    <input
+                      formControlName="batchCode"
+                      class="form-control form-control-sm me-2"
+                      placeholder="Code"
+                      style="max-width: 120px"
+                    />
+                    <input
+                      formControlName="batchName"
+                      class="form-control form-control-sm me-2"
+                      placeholder="Name"
+                      style="max-width: 200px"
+                    />
+                    <input
+                      formControlName="batchStartDate"
+                      type="date"
+                      class="form-control form-control-sm me-2"
+                      style="max-width: 150px"
+                    />
+                    <button class="btn btn-sm" (click)="saveBatch(bi)" style="background-color: transparent; border: none">
+                      <i class="fa-regular fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm" (click)="removeBatch(bi)" style="background-color: transparent; border: none">
+                      <i class="fa-regular fa-xmark"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
 
-            <!-- Courses Header -->
-            <tr *ngIf="courses(bi,pi).length" class="course-header">
-              <th>Actions</th>
-              <th>Code</th>
-              <th>Course Name</th>
-              <th>Teacher</th>
-            </tr>
+              <!-- Batch View Mode -->
+              <tr *ngIf="!batch.get('editing')!.value" [ngStyle]="{'background': bi % 2 === 0 ? '#f8fbff' : 'transparent'}">
+                <td>
+                  <button class="btn btn-sm" (click)="editBatch(bi)" style="background-color: transparent; border: none">
+                    <i class="fa-regular fa-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm" (click)="removeBatch(bi)" style="background-color: transparent; border: none">
+                    <i class="fa-regular fa-trash"></i>
+                  </button>
+                  <button class="btn btn-sm" (click)="addProgram(bi)" style="background-color: transparent; border: none">
+                    <i class="fa-regular fa-plus"></i>
+                  </button>
+                </td>
+                <td style="color: #2f72f4; text-decoration: underline">{{ batch.value.batchCode }}</td>
+                <td>{{ batch.value.batchName }}</td>
+                <td>{{ batch.value.batchStartDate | date:'dd MMM yyyy' }}</td>
+              </tr>
 
-            <!-- Courses -->
-            <ng-container formArrayName="courses">
-              <ng-container *ngFor="let course of courses(bi,pi).controls; let ci = index" [formGroupName]="ci">
-
-                <!-- Course Edit Mode -->
-                <tr class="course-form-row" *ngIf="course.get('editing')!.value">
-                  <td colspan="4">
-                    <form class="form-inline">
-                      <input
-                        formControlName="courseCode"
-                        class="form-control form-control-sm mr-2"
-                        placeholder="Code"
-                      />
-                      <select
-                        formControlName="courseName"
-                        class="form-control form-control-sm mr-2"
-                      >
-                        <option *ngFor="let c of coursesList" [value]="c">{{ c }}</option>
-                      </select>
-                      <select
-                        formControlName="teacher"
-                        class="form-control form-control-sm mr-2"
-                      >
-                        <option *ngFor="let t of teachersList" [value]="t">{{ t }}</option>
-                      </select>
-                      <button
-                        class="btn btn-sm btn-success mr-1"
-                        (click)="saveCourse(bi, pi, ci)"
-                      >✔</button>
-                      <button
-                        class="btn btn-sm btn-secondary"
-                        (click)="removeCourse(bi, pi, ci)"
-                      >✖</button>
-                    </form>
-                  </td>
+              <!-- Programs Section -->
+              <ng-container *ngIf="programs(bi).length">
+                <!-- Programs Header -->
+                <tr class="program-header" [ngStyle]="{'background': '#f8fbff'}">
+                  <th>Actions</th>
+                  <th>Code</th>
+                  <th>Program Name</th>
+                  <th>Students</th>
                 </tr>
 
-                <!-- Course View Mode -->
-                <tr class="course-row" *ngIf="!course.get('editing')!.value">
-                  <td>
-                    <button
-                      class="btn btn-link"
-                      (click)="editCourse(bi, pi, ci)"
-                    ><i class="fas fa-edit"></i></button>
-                    <button
-                      class="btn btn-link"
-                      (click)="removeCourse(bi, pi, ci)"
-                    ><i class="fas fa-trash"></i></button>
-                  </td>
-                  <td>{{ course.value.courseCode }}</td>
-                  <td>{{ course.value.courseName }}</td>
-                  <td>{{ course.value.teacher }}</td>
-                </tr>
+                <!-- Programs -->
+                <ng-container formArrayName="programs">
+                  <ng-container *ngFor="let prog of programs(bi).controls; let pi = index" [formGroupName]="pi">
+                    <!-- Program Edit Mode -->
+                    <tr *ngIf="prog.get('editing')!.value" [ngStyle]="{'background': (bi+pi) % 2 === 0 ? '#f8fbff' : 'transparent'}">
+                      <td colspan="4">
+                        <div class="d-flex align-items-center">
+                          <input
+                            formControlName="programCode"
+                            class="form-control form-control-sm me-2"
+                            placeholder="Code"
+                            style="max-width: 120px"
+                          />
+                          <input
+                            formControlName="programName"
+                            class="form-control form-control-sm me-2"
+                            placeholder="Name"
+                            style="max-width: 200px"
+                          />
+                          <select
+                            multiple
+                            class="form-control form-control-sm me-2"
+                            (change)="onStudentSelect($event, bi, pi)"
+                            style="max-width: 250px"
+                          >
+                            <option *ngFor="let s of studentsList" [value]="s">{{ s }}</option>
+                          </select>
+                          <button class="btn btn-sm" (click)="saveProgram(bi, pi)" style="background-color: transparent; border: none">
+                            <i class="fa-regular fa-check"></i>
+                          </button>
+                          <button class="btn btn-sm" (click)="removeProgram(bi, pi)" style="background-color: transparent; border: none">
+                            <i class="fa-regular fa-xmark"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
 
+                    <!-- Program View Mode -->
+                    <tr *ngIf="!prog.get('editing')!.value" [ngStyle]="{'background': (bi+pi) % 2 === 0 ? '#f8fbff' : 'transparent'}">
+                      <td>
+                        <button class="btn btn-sm" (click)="editProgram(bi, pi)" style="background-color: transparent; border: none">
+                          <i class="fa-regular fa-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm" (click)="removeProgram(bi, pi)" style="background-color: transparent; border: none">
+                          <i class="fa-regular fa-trash"></i>
+                        </button>
+                        <button class="btn btn-sm" (click)="addCourse(bi, pi)" style="background-color: transparent; border: none">
+                          <i class="fa-regular fa-plus"></i>
+                        </button>
+                      </td>
+                      <td style="color: #2f72f4; text-decoration: underline">{{ prog.value.programCode }}</td>
+                      <td>{{ prog.value.programName }}</td>
+                      <td>
+                        <!-- First two students -->
+                        <span *ngFor="let student of prog.value.students.slice(0, 2); let last = last">
+                          {{ student }}{{ last ? '' : ', ' }}
+                        </span>
+
+                        <!-- "+ N more" with Bootstrap Tooltip -->
+                        <span
+                          *ngIf="prog.value.students.length > 2"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          [attr.title]="prog.value.students.slice(2).join(', ')"
+                          class="text-primary"
+                          style="cursor: pointer; margin-left: 4px"
+                        >
+                          + {{ prog.value.students.length - 2 }} more
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Courses Section -->
+                    <ng-container *ngIf="courses(bi, pi).length">
+                      <!-- Courses Header -->
+                      <tr class="course-header" [ngStyle]="{'background': '#f8fbff'}">
+                        <th>Actions</th>
+                        <th>Code</th>
+                        <th>Course Name</th>
+                        <th>Teacher</th>
+                      </tr>
+
+                      <!-- Courses -->
+                      <ng-container formArrayName="courses">
+                        <ng-container *ngFor="let course of courses(bi, pi).controls; let ci = index" [formGroupName]="ci">
+                          <!-- Course Edit Mode -->
+                          <tr *ngIf="course.get('editing')!.value" [ngStyle]="{'background': (bi+pi+ci) % 2 === 0 ? '#f8fbff' : 'transparent'}">
+                            <td colspan="4">
+                              <div class="d-flex align-items-center">
+                                <input
+                                  formControlName="courseCode"
+                                  class="form-control form-control-sm me-2"
+                                  placeholder="Code"
+                                  style="max-width: 120px"
+                                />
+                                <select
+                                  formControlName="courseName"
+                                  class="form-control form-control-sm me-2"
+                                  style="max-width: 200px"
+                                >
+                                  <option *ngFor="let c of coursesList" [value]="c">{{ c }}</option>
+                                </select>
+                                <select
+                                  formControlName="teacher"
+                                  class="form-control form-control-sm me-2"
+                                  style="max-width: 200px"
+                                >
+                                  <option *ngFor="let t of teachersList" [value]="t">{{ t }}</option>
+                                </select>
+                                <button class="btn btn-sm" (click)="saveCourse(bi, pi, ci)" style="background-color: transparent; border: none">
+                                  <i class="fa-regular fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm" (click)="removeCourse(bi, pi, ci)" style="background-color: transparent; border: none">
+                                  <i class="fa-regular fa-xmark"></i>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+
+                          <!-- Course View Mode -->
+                          <tr *ngIf="!course.get('editing')!.value" [ngStyle]="{'background': (bi+pi+ci) % 2 === 0 ? '#f8fbff' : 'transparent'}">
+                            <td>
+                              <button class="btn btn-sm" (click)="editCourse(bi, pi, ci)" style="background-color: transparent; border: none">
+                                <i class="fa-regular fa-pencil"></i>
+                              </button>
+                              <button class="btn btn-sm" (click)="removeCourse(bi, pi, ci)" style="background-color: transparent; border: none">
+                                <i class="fa-regular fa-trash"></i>
+                              </button>
+                            </td>
+                            <td style="color: #2f72f4; text-decoration: underline">{{ course.value.courseCode }}</td>
+                            <td>{{ course.value.courseName }}</td>
+                            <td>{{ course.value.teacher }}</td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
               </ng-container>
             </ng-container>
+          </tbody>
+        </table>
+      </div>
 
-          </ng-container>
-        </ng-container>
+      <div class="d-flex justify-content-between align-items-center w-100 custom-font mt-3">
+        <div class="text-end me-1">
+          <span>Showing {{ batches.length }} batches</span>
+        </div>
 
-      </ng-container>
-    </tbody>
-  </table>
-
-  <div class="mt-3 text-muted">
-    Showing {{ batches.length }} batches
+        <!-- Pagination Controls - Add if needed -->
+        <!-- <div class="d-flex align-items-center">
+          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <span><i class="fa-regular fa-angle-double-left"></i></span>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <span><i class="fa-regular fa-angle-left"></i></span>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #2f72f4; color: #2f72f4;">1</button>
+          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <span><i class="fa-regular fa-angle-right"></i></span>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <span><i class="fa-regular fa-angle-double-right"></i></span>
+          </button>
+          <select class="form-select form-select-sm ms-2" style="width: 60px;">
+            <option selected value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div> -->
+      </div>
+    </div>
   </div>
-  <hr />
-  <div class="text-center text-muted">© 2023 Cozentus</div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header flex-column align-items-start pb-0" style="border-bottom: none">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Batch</h5>
+        <hr class="modal-title-line w-100 m-0 mt-3" />
+        <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fa-solid fa-xmark-large"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure that you want to delete batch <span id="batchCodeToDelete"></span>?</p>
+      </div>
+      <div class="modal-footer justify-content-end border-0 pt-0">
+        <button type="button" class="btn btn-primary px-4" id="confirmDeleteBtn" style="background-color: #2962ff; border-radius: 6px; font-weight: 500">
+          Yes
+        </button>
+        <button type="button" class="btn btn-outline-secondary px-4 ms-2" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 500">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+
 <div
   class="container-fluid px-4"
   style="background-color: #e9f3f9; min-height: 88vh"
@@ -208,13 +208,13 @@
               data-bs-placement="bottom"
               [attr.title]="'Click to view or add topic'"
               class="text-primary"
-              [routerLink]="['/topics', course.code, course.name]"
+              [routerLink]="['/admin/topics', course.code, course.name]"
               (click)="hideTooltip($event)"
               style="cursor: pointer; margin-left: 4px"
             >
               {{ course.code }}
             </a>
-            
+
 
                 <form
                   [formGroup]="courseForm"
@@ -477,7 +477,7 @@
   </div>
 </div>
 
-<app-footer></app-footer>
+
 
 
 <!-- Description Modal -->

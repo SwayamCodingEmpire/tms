@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+
 <div class="container-fluid px-4" style="background-color: #e9f3f9; min-height: 80vh;">
   <div class="row mb-3 align-items-center">
     <div class="col">
@@ -235,12 +235,12 @@
      [style.left.px]="topicModalLeft"
      [style.width.px]="topicModalWidth"
      (click)="$event.stopPropagation()">
-    <div class="modal-content border-0"> 
+    <div class="modal-content border-0">
       <div class="modal-header p-2">
         <div class="d-flex align-items-center w-100">
           <!-- Select All Checkbox -->
           <div class="me-2 d-flex align-items-center justify-content-center" style="min-width: 24px;">
-            <input type="checkbox" class="form-check-input" 
+            <input type="checkbox" class="form-check-input"
                    [checked]="isAllSelected()"
                    (change)="toggleSelectAll()"
                    id="selectAllTopics">
@@ -250,7 +250,7 @@
                  placeholder="Search"
                  [(ngModel)]="topicSearchTerm"
                  (input)="filterTopics()">
-          
+
           <!-- Close button moved inline with search -->
           <button
             type="button"
@@ -262,7 +262,7 @@
         </div>
       </div>
       <div class="modal-body p-0">
-        <div class="topics-list"> 
+        <div class="topics-list">
            <div *ngIf="filteredTopics.length === 0" class="p-2 text-muted text-center">
                No topics found.
            </div>
@@ -273,7 +273,7 @@
                (click)="toggleTopicSelection(topic)">
                <input type="checkbox" class="form-check-input me-2"
                    [checked]="selectedTopics[topic]"
-                   tabindex="-1"> 
+                   tabindex="-1">
                <span>{{ topic }}</span>
           </div>
         </div>
