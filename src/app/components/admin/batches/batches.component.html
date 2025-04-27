@@ -1,7 +1,7 @@
 <div class="container-fluid px-4" style="background-color: #e9f3f9; min-height: 88vh">
   <div class="row mb-3 align-items-center">
     <div class="col">
-      <label class="mt-3">Batches</label>
+      <label class="mt-3 custom-font">Batches</label>
     </div>
     <div class="col" style="display: flex; justify-content: flex-end">
       <button
@@ -26,16 +26,20 @@
   <div class="card shadow-sm p-3" style="box-shadow: black; border: none" [formGroup]="rootForm">
     <div class="card-body">
       <div class="mb-3 d-flex align-items-center justify-content-between">
-        <!-- Search Field -->
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search"
-          style="width: 280px"
-        />
+        <!-- Search Field with FormGroup -->
+        <form [formGroup]="searchForm">
+          <input
+            type="text"
+            class="form-control custom-font"
+            placeholder="Search"
+            style="width: 280px"
+            formControlName="searchTerm"
+          />
+        </form>
 
         <button
-          class="btn"
+          class="btn custom-font"
+          [disabled]="isAddingNewBatch"
           style="
             border-radius: 5px;
             border-color: #000000;
@@ -49,286 +53,603 @@
       </div>
 
       <div
-        *ngIf="!batches.length"
+        *ngIf="!batches.controls.length"
         class="d-flex justify-content-start align-items-center"
         style="
           height: 40px;
-          background-color: #f8fbff;
+          background-color: #e4f0ff;
           border-radius: 5px;
           border: none;
         "
       >
-        <span class="px-3 fw-semibold text-dark"
+        <span class="px-3 fw-semibold text-dark custom-font"
           >Please add a batch to see content</span
         >
       </div>
 
-      <div class="table-responsive mt-2">
+      <div class="table-responsive mt-2" *ngIf="batches.controls.length">
         <table class="table table-borderless table-responsive">
           <thead>
             <tr>
-              <th style="background: #f8fbff">Actions</th>
-              <th style="background: #f8fbff">
+              <th style="background: #f8fbff; width: 40px;"></th>
+              <th style="background: #f8fbff; width: 120px;">Actions</th>
+              <th style="background: #f8fbff; text-align: center; width: 150px;">
                 <div class="d-flex flex-row align-items-center">
-                  Batch Code
+                  Batch code
                   <div
                     class="d-flex flex-column align-items-center ms-2"
                     style="font-size: x-small"
                   >
-                    <i class="fas fa-chevron-up"></i>
-                    <i class="fas fa-chevron-down"></i>
+                    <i
+                      class="fas fa-chevron-up"
+                      (click)="sortTable('batchCode', true)"
+                      [style.color]="
+                        sortedColumn === 'batchCode' && isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-chevron-down"
+                      (click)="sortTable('batchCode', false)"
+                      [style.color]="
+                        sortedColumn === 'batchCode' && !isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
                   </div>
                 </div>
               </th>
-              <th style="background: #f8fbff">
+
+              <th style="background: #f8fbff; text-align: center; width: 200px;">
                 <div class="d-flex flex-row align-items-center">
                   Batch Name
                   <div
                     class="d-flex flex-column align-items-center ms-2"
                     style="font-size: x-small"
                   >
-                    <i class="fas fa-chevron-up"></i>
-                    <i class="fas fa-chevron-down"></i>
+                    <i
+                      class="fas fa-chevron-up"
+                      (click)="sortTable('batchName', true)"
+                      [style.color]="
+                        sortedColumn === 'batchName' && isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-chevron-down"
+                      (click)="sortTable('batchName', false)"
+                      [style.color]="
+                        sortedColumn === 'batchName' && !isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                  </div>
+                  <i class="fa-light fa-filter ms-3"></i>
+                </div>
+              </th>
+
+              <th style="background: #f8fbff; text-align: center; width: 250px;">
+                <div class="d-flex flex-row align-items-center">
+                  Batch Start Date
+                  <div
+                    class="d-flex flex-column align-items-center ms-2"
+                    style="font-size: x-small"
+                  >
+                    <i
+                      class="fas fa-chevron-up"
+                      (click)="sortTable('batchStartDate', true)"
+                      [style.color]="
+                        sortedColumn === 'batchStartDate' && isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-chevron-down"
+                      (click)="sortTable('batchStartDate', false)"
+                      [style.color]="
+                        sortedColumn === 'batchStartDate' && !isAscending
+                          ? 'blue'
+                          : 'black'
+                      "
+                    ></i>
                   </div>
                 </div>
               </th>
-              <th style="background: #f8fbff">Batch Start Date</th>
             </tr>
           </thead>
-
           <tbody formArrayName="batches">
-            <ng-container *ngFor="let batch of batches.controls; let bi = index" [formGroupName]="bi">
-              <!-- Batch Edit Mode -->
-              <tr *ngIf="batch.get('editing')!.value">
-                <td colspan="4">
-                  <div class="d-flex align-items-center">
-                    <input
-                      formControlName="batchCode"
-                      class="form-control form-control-sm me-2"
-                      placeholder="Code"
-                      style="max-width: 120px"
-                    />
-                    <input
-                      formControlName="batchName"
-                      class="form-control form-control-sm me-2"
-                      placeholder="Name"
-                      style="max-width: 200px"
-                    />
-                    <input
-                      formControlName="batchStartDate"
-                      type="date"
-                      class="form-control form-control-sm me-2"
-                      style="max-width: 150px"
-                    />
-                    <button class="btn btn-sm" (click)="saveBatch(bi)" style="background-color: transparent; border: none">
+            <ng-container *ngFor="
+              let batch of batches.controls
+                | paginate
+                  : { itemsPerPage: pageSize, currentPage: currentPage };
+              let i = index
+            " [formGroupName]="i + pageSize * (currentPage - 1)">
+              <tr class="main-row" style="border-bottom: none;">
+                <!-- Dropdown Icon Column -->
+                <td
+                  [ngStyle]="{
+                    background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                  }"
+                  style="text-align: center;"
+                >
+                  <button
+                    style="background-color: transparent; border: none; padding: 0;"
+                    (click)="toggleDetails(i + pageSize * (currentPage - 1))"
+                  >
+                    <i class="fa-thin fa-circle-chevron-down" style="font-size: 25px;"></i>
+                  </button>
+                </td>
+
+                <!-- Actions (Edit & Delete) -->
+                <td
+                  [ngStyle]="{
+                    background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                  }"
+                  style="display: flex; align-items: center;"
+                >
+                  <ng-container *ngIf="!batch.get('editing')?.value">
+                    <button
+                      (click)="editBatch(i + pageSize * (currentPage - 1))"
+                      style="background-color: transparent; border: none; padding: 0 5px;"
+                      [disabled]="isAddingNewBatch"
+                    >
+                      <i class="fa-regular fa-pencil"></i>
+                    </button>
+                    <button
+                      (click)="openDeleteConfirmationModal(i + pageSize * (currentPage - 1))"
+                      style="background-color: transparent; border: none; padding: 0 5px;"
+                    >
+                      <i class="fa-regular fa-trash"></i>
+                    </button>
+                  </ng-container>
+
+                  <!-- Save & Cancel Buttons in Edit Mode -->
+                  <ng-container *ngIf="batch.get('editing')?.value">
+                    <button
+                      (click)="saveBatch(i + pageSize * (currentPage - 1))"
+                      style="background-color: transparent; border: none; padding: 0 5px;"
+                    >
                       <i class="fa-regular fa-check"></i>
                     </button>
-                    <button class="btn btn-sm" (click)="removeBatch(bi)" style="background-color: transparent; border: none">
+                    <button
+                      (click)="cancelEdit(i + pageSize * (currentPage - 1))"
+                      style="background-color: transparent; border: none; padding: 0 5px;"
+                    >
                       <i class="fa-regular fa-xmark"></i>
                     </button>
+                  </ng-container>
+
+                  <!-- Separator bar before plus button -->
+                  <span style="color: #ccc; margin: 0 5px;">|</span>
+
+                  <!-- Plus button always visible -->
+                  <button
+                    style="background-color: transparent; border: none; padding: 0 5px;"
+                    (click)="addProgram(i + pageSize * (currentPage - 1))"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    [attr.title]="'Click to add Program'"
+                  >
+                    <i class="fa-light fa-plus" style="font-size: 16px;"></i>
+                  </button>
+                </td>
+
+                <!-- Batch Code Column -->
+                <td
+                  [ngStyle]="{
+                    background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                  }"
+                  style="
+                    color: #2f72f4;
+                    text-decoration: underline;
+                    max-width: 70px;
+                  "
+                >
+                  <ng-container *ngIf="!batch.get('editing')?.value">
+                    <a
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      [attr.title]="'Click to view batch details'"
+                      class="text-secondary custom-font"
+                      style="cursor: pointer; text-decoration: underline; color: #0953e6;"
+                    >
+                      {{ batch.get('batchCode')?.value }}
+                    </a>
+                  </ng-container>
+                  <ng-container *ngIf="batch.get('editing')?.value">
+                    <input
+                      type="text"
+                      formControlName="batchCode"
+                      class="form-control custom-font"
+                      style="height: 25px; font-size: inherit; border-radius: 0; width: 120px; background-color: #f8fbff;"
+                      placeholder="Enter Batch Code"
+                    />
+                  </ng-container>
+                </td>
+
+                <!-- Batch Name -->
+                <td
+                  [ngStyle]="{
+                    background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                  }"
+                >
+                  <ng-container *ngIf="!batch.get('editing')?.value">
+                    {{ batch.get('batchName')?.value }}
+                  </ng-container>
+                  <ng-container *ngIf="batch.get('editing')?.value">
+                    <input
+                      type="text"
+                      formControlName="batchName"
+                      class="form-control custom-font"
+                      style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff;"
+                      placeholder="Enter Batch Name"
+                    />
+                  </ng-container>
+                </td>
+
+                <!-- Batch Start Date -->
+                <td
+                  [ngStyle]="{
+                    background: i % 2 === 0 ? '#f8fbff' : 'transparent'
+                  }"
+                >
+                  <ng-container *ngIf="!batch.get('editing')?.value">
+                    {{ batch.get('batchStartDate')?.value | date:'dd MMM yyyy' }}
+                  </ng-container>
+                  <ng-container *ngIf="batch.get('editing')?.value">
+                    <input
+                      type="date"
+                      formControlName="batchStartDate"
+                      class="form-control custom-font"
+                      style="height: 25px; font-size: inherit; border-radius: 0; width: 140px; background-color: #f8fbff;"
+                    />
+                  </ng-container>
+                </td>
+              </tr>
+
+              <!-- Dropdown Detail Row - placed immediately after the respective batch row -->
+              <tr *ngIf="batch.get('showDetails')?.value === true" style="border-top: none;">
+                <td colspan="5" style="padding: 0;">
+                  <div class="p-3" style="background-color: #ffffff; border-radius: 0 0 5px 5px; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <table class="table table-borderless mb-0 custom-font">
+                      <thead>
+                        <tr style="background-color: #ffffff;">
+                          <th style="width: 40px; background: transparent;"></th>
+                          <th style="background: transparent; width: 120px;">Actions</th>
+                          <th style="background: transparent; width: 150px;">Code</th>
+                          <th style="background: transparent; width: 200px;">Program Name <i class="fa-light fa-filter ms-1"></i></th>
+                          <th style="background: transparent; width: 250px;">Students</th>
+                        </tr>
+                      </thead>
+                      <tbody formArrayName="programs">
+                        <ng-container *ngFor="let program of programs(i + pageSize * (currentPage - 1)).controls; let pi = index" [formGroupName]="pi">
+                        <tr style="background-color: #f8fbff;" [formGroup]="$any(program)">
+                          <td style="text-align: center;">
+                            <button
+                              style="background-color: transparent; border: none; padding: 0;"
+                            >
+                              <i class="fa-thin fa-circle-chevron-down" style="font-size: 20px;"></i>
+                            </button>
+                          </td>
+                          <td style="display: flex; align-items: center;">
+                            <!-- Normal view mode buttons -->
+                            <ng-container *ngIf="!program.get('editing')?.value">
+                              <button
+                                style="background-color: transparent; border: none; padding: 0 5px;"
+                                (click)="editProgram(i + pageSize * (currentPage - 1), pi)"
+                              >
+                                <i class="fa-regular fa-pencil"></i>
+                              </button>
+                              <button
+                                style="background-color: transparent; border: none; padding: 0 5px;"
+                                (click)="removeProgram(i + pageSize * (currentPage - 1), pi)"
+                              >
+                                <i class="fa-regular fa-trash"></i>
+                              </button>
+                            </ng-container>
+
+                            <!-- Edit mode buttons -->
+                            <ng-container *ngIf="program.get('editing')?.value">
+                              <button
+                                style="background-color: transparent; border: none; padding: 0 5px;"
+                                (click)="saveProgram(i + pageSize * (currentPage - 1), pi)"
+                              >
+                                <i class="fa-regular fa-check"></i>
+                              </button>
+                              <button
+                                style="background-color: transparent; border: none; padding: 0 5px;"
+                                (click)="removeProgram(i + pageSize * (currentPage - 1), pi)"
+                              >
+                                <i class="fa-regular fa-xmark"></i>
+                              </button>
+                            </ng-container>
+
+                            <span style="color: #ccc; margin: 0 5px;">|</span>
+                            <button
+                              style="background-color: transparent; border: none; padding: 0 5px;"
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="bottom"
+                              [attr.title]="'Click to add Course'"
+                              (click)="addCourse(i + pageSize * (currentPage - 1), pi)"
+                            >
+                              <i class="fa-light fa-plus" style="font-size: 16px;"></i>
+                            </button>
+                          </td>
+
+                          <!-- Code Column -->
+                          <td>
+                            <!-- Normal view mode -->
+                            <ng-container *ngIf="!program.get('editing')?.value">
+                              <a class="text-secondary custom-font" style="cursor: pointer; text-decoration: underline; color: #0953e6;">
+                                {{ program.get('programCode')?.value }}
+                              </a>
+                            </ng-container>
+                            <!-- Edit mode -->
+                            <ng-container *ngIf="program.get('editing')?.value">
+                              <input
+                                type="text"
+                                formControlName="programCode"
+                                class="form-control custom-font"
+                                style="height: 25px; font-size: inherit; border-radius: 0; width: 100px; background-color: #f8fbff;"
+                                placeholder="Enter Code"
+                              />
+                            </ng-container>
+                          </td>
+
+                          <!-- Program Name Column -->
+                          <td>
+                            <!-- Normal view mode -->
+                            <ng-container *ngIf="!program.get('editing')?.value">
+                              {{ program.get('programName')?.value }}
+                            </ng-container>
+                            <!-- Edit mode -->
+                            <ng-container *ngIf="program.get('editing')?.value">
+                              <input
+                                type="text"
+                                formControlName="programName"
+                                class="form-control custom-font"
+                                style="height: 25px; font-size: inherit; border-radius: 0; width: 120px; background-color: #f8fbff;"
+                                placeholder="Enter Program"
+                              />
+                            </ng-container>
+                          </td>
+
+                          <!-- Students Column -->
+                          <td>
+                            <!-- Normal view mode -->
+                            <ng-container *ngIf="!program.get('editing')?.value">
+                              <!-- Display selected students (first 1 + count of remaining) -->
+                              <span *ngIf="program.get('selectedStudents')?.value?.length">
+                                <span *ngFor="let student of program.get('selectedStudents')?.value?.slice(0, 1); let j = index">
+                                  1D2125: {{ student }}
+                                </span>
+                                <span
+                                  *ngIf="program.get('selectedStudents')?.value?.length > 1"
+                                  style="color: #0d6efd; text-decoration: underline;"
+                                >
+                                  +{{ program.get('selectedStudents')?.value?.length - 1 }} more
+                                </span>
+                              </span>
+                              <span *ngIf="!program.get('selectedStudents')?.value?.length">
+                                No students selected
+                              </span>
+                            </ng-container>
+
+                            <!-- Edit mode -->
+                            <ng-container *ngIf="program.get('editing')?.value">
+                              <div
+                                (click)="openStudentsModal($event, i + pageSize * (currentPage - 1), pi)"
+                                class="student-selector"
+                                style="cursor: pointer; width: 250px;"
+                              >
+                                <span *ngIf="program.get('selectedStudents')?.value?.length" class="ms-1">
+                                  <span *ngFor="let student of program.get('selectedStudents')?.value?.slice(0, 1); let last = last">
+                                    1D2125: {{ student }}
+                                  </span>
+                                  <span
+                                    *ngIf="program.get('selectedStudents')?.value?.length > 1"
+                                    style="color: #0d6efd; text-decoration: underline;"
+                                  >
+                                    +{{ program.get('selectedStudents')?.value?.length - 1 }} more
+                                  </span>
+                                  <span class="dropdown-icon">
+                                    <i class="fa-regular fa-chevron-down"></i>
+                                  </span>
+                                </span>
+                                <span *ngIf="!program.get('selectedStudents')?.value?.length" class="text-muted">
+                                  Select students...
+                                </span>
+                              </div>
+                            </ng-container>
+                          </td>
+                        </tr>
+
+                        <!-- Course Section - Add when program detail is expanded -->
+                        <tr *ngIf="program.get('showDetails')?.value === true" style="border-top: none;">
+                          <td colspan="5" style="padding: 0;">
+                            <div class="p-3" style="background-color: #ffffff; border-radius: 0 0 5px 5px; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                              <table class="table table-borderless mb-0 custom-font">
+                                <thead>
+                                  <tr style="background-color: #f8fbff;">
+                                    <th style="width: 120px;">Actions</th>
+                                    <th style="width: 150px;">Code</th>
+                                    <th style="width: 200px;">Course Name</th>
+                                    <th style="width: 250px;">Teacher</th>
+                                  </tr>
+                                </thead>
+                                <tbody formArrayName="courses">
+                                  <ng-container *ngFor="let course of courses(i + pageSize * (currentPage - 1), pi).controls; let ci = index" [formGroupName]="ci">
+                                  <tr style="background-color: #f8fbff;" [formGroup]="$any(course)">
+                                    <td style="display: flex; align-items: center;">
+                                      <!-- Normal view mode buttons -->
+                                      <ng-container *ngIf="!course.get('editing')?.value">
+                                        <button
+                                          style="background-color: transparent; border: none; padding: 0 5px;"
+                                          (click)="editCourse(i + pageSize * (currentPage - 1), pi, ci)"
+                                        >
+                                          <i class="fa-regular fa-pencil"></i>
+                                        </button>
+                                        <button
+                                          style="background-color: transparent; border: none; padding: 0 5px;"
+                                          (click)="removeCourse(i + pageSize * (currentPage - 1), pi, ci)"
+                                        >
+                                          <i class="fa-regular fa-trash"></i>
+                                        </button>
+                                      </ng-container>
+
+                                      <!-- Edit mode buttons -->
+                                      <ng-container *ngIf="course.get('editing')?.value">
+                                        <button
+                                          style="background-color: transparent; border: none; padding: 0 5px;"
+                                          (click)="saveCourse(i + pageSize * (currentPage - 1), pi, ci)"
+                                        >
+                                          <i class="fa-regular fa-check"></i>
+                                        </button>
+                                        <button
+                                          style="background-color: transparent; border: none; padding: 0 5px;"
+                                          (click)="removeCourse(i + pageSize * (currentPage - 1), pi, ci)"
+                                        >
+                                          <i class="fa-regular fa-xmark"></i>
+                                        </button>
+                                      </ng-container>
+                                    </td>
+
+                                    <!-- Course Code Column -->
+                                    <td>
+                                      <!-- Normal view mode -->
+                                      <ng-container *ngIf="!course.get('editing')?.value">
+                                        <a class="text-secondary custom-font" style="cursor: pointer; text-decoration: underline; color: #0953e6;">
+                                          {{ course.get('courseCode')?.value }}
+                                        </a>
+                                      </ng-container>
+                                      <!-- Edit mode -->
+                                      <ng-container *ngIf="course.get('editing')?.value">
+                                        <input
+                                          type="text"
+                                          formControlName="courseCode"
+                                          class="form-control custom-font"
+                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 100px; background-color: #f8fbff;"
+                                          placeholder="Enter Code"
+                                        />
+                                      </ng-container>
+                                    </td>
+
+                                    <!-- Course Name Column -->
+                                    <td>
+                                      <!-- Normal view mode -->
+                                      <ng-container *ngIf="!course.get('editing')?.value">
+                                        {{ course.get('courseName')?.value }}
+                                      </ng-container>
+                                      <!-- Edit mode -->
+                                      <ng-container *ngIf="course.get('editing')?.value">
+                                        <select
+                                          formControlName="courseName"
+                                          class="form-control custom-font"
+                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff;"
+                                        >
+                                          <option *ngFor="let c of coursesList" [value]="c">{{ c }}</option>
+                                        </select>
+                                      </ng-container>
+                                    </td>
+
+                                    <!-- Teacher Column -->
+                                    <td>
+                                      <!-- Normal view mode -->
+                                      <ng-container *ngIf="!course.get('editing')?.value">
+                                        {{ course.get('teacher')?.value }}
+                                      </ng-container>
+                                      <!-- Edit mode -->
+                                      <ng-container *ngIf="course.get('editing')?.value">
+                                        <select
+                                          formControlName="teacher"
+                                          class="form-control custom-font"
+                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff;"
+                                        >
+                                          <option *ngFor="let t of teachersList" [value]="t">{{ t }}</option>
+                                        </select>
+                                      </ng-container>
+                                    </td>
+                                  </tr>
+                                  </ng-container>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
                   </div>
                 </td>
               </tr>
-
-              <!-- Batch View Mode -->
-              <tr *ngIf="!batch.get('editing')!.value" [ngStyle]="{'background': bi % 2 === 0 ? '#f8fbff' : 'transparent'}">
-                <td>
-                  <button class="btn btn-sm" (click)="editBatch(bi)" style="background-color: transparent; border: none">
-                    <i class="fa-regular fa-pencil"></i>
-                  </button>
-                  <button class="btn btn-sm" (click)="removeBatch(bi)" style="background-color: transparent; border: none">
-                    <i class="fa-regular fa-trash"></i>
-                  </button>
-                  <button class="btn btn-sm" (click)="addProgram(bi)" style="background-color: transparent; border: none">
-                    <i class="fa-regular fa-plus"></i>
-                  </button>
-                </td>
-                <td style="color: #2f72f4; text-decoration: underline">{{ batch.value.batchCode }}</td>
-                <td>{{ batch.value.batchName }}</td>
-                <td>{{ batch.value.batchStartDate | date:'dd MMM yyyy' }}</td>
-              </tr>
-
-              <!-- Programs Section -->
-              <ng-container *ngIf="programs(bi).length">
-                <!-- Programs Header -->
-                <tr class="program-header" [ngStyle]="{'background': '#f8fbff'}">
-                  <th>Actions</th>
-                  <th>Code</th>
-                  <th>Program Name</th>
-                  <th>Students</th>
-                </tr>
-
-                <!-- Programs -->
-                <ng-container formArrayName="programs">
-                  <ng-container *ngFor="let prog of programs(bi).controls; let pi = index" [formGroupName]="pi">
-                    <!-- Program Edit Mode -->
-                    <tr *ngIf="prog.get('editing')!.value" [ngStyle]="{'background': (bi+pi) % 2 === 0 ? '#f8fbff' : 'transparent'}">
-                      <td colspan="4">
-                        <div class="d-flex align-items-center">
-                          <input
-                            formControlName="programCode"
-                            class="form-control form-control-sm me-2"
-                            placeholder="Code"
-                            style="max-width: 120px"
-                          />
-                          <input
-                            formControlName="programName"
-                            class="form-control form-control-sm me-2"
-                            placeholder="Name"
-                            style="max-width: 200px"
-                          />
-                          <select
-                            multiple
-                            class="form-control form-control-sm me-2"
-                            (change)="onStudentSelect($event, bi, pi)"
-                            style="max-width: 250px"
-                          >
-                            <option *ngFor="let s of studentsList" [value]="s">{{ s }}</option>
-                          </select>
-                          <button class="btn btn-sm" (click)="saveProgram(bi, pi)" style="background-color: transparent; border: none">
-                            <i class="fa-regular fa-check"></i>
-                          </button>
-                          <button class="btn btn-sm" (click)="removeProgram(bi, pi)" style="background-color: transparent; border: none">
-                            <i class="fa-regular fa-xmark"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-
-                    <!-- Program View Mode -->
-                    <tr *ngIf="!prog.get('editing')!.value" [ngStyle]="{'background': (bi+pi) % 2 === 0 ? '#f8fbff' : 'transparent'}">
-                      <td>
-                        <button class="btn btn-sm" (click)="editProgram(bi, pi)" style="background-color: transparent; border: none">
-                          <i class="fa-regular fa-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm" (click)="removeProgram(bi, pi)" style="background-color: transparent; border: none">
-                          <i class="fa-regular fa-trash"></i>
-                        </button>
-                        <button class="btn btn-sm" (click)="addCourse(bi, pi)" style="background-color: transparent; border: none">
-                          <i class="fa-regular fa-plus"></i>
-                        </button>
-                      </td>
-                      <td style="color: #2f72f4; text-decoration: underline">{{ prog.value.programCode }}</td>
-                      <td>{{ prog.value.programName }}</td>
-                      <td>
-                        <!-- First two students -->
-                        <span *ngFor="let student of prog.value.students.slice(0, 2); let last = last">
-                          {{ student }}{{ last ? '' : ', ' }}
-                        </span>
-
-                        <!-- "+ N more" with Bootstrap Tooltip -->
-                        <span
-                          *ngIf="prog.value.students.length > 2"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          [attr.title]="prog.value.students.slice(2).join(', ')"
-                          class="text-primary"
-                          style="cursor: pointer; margin-left: 4px"
-                        >
-                          + {{ prog.value.students.length - 2 }} more
-                        </span>
-                      </td>
-                    </tr>
-
-                    <!-- Courses Section -->
-                    <ng-container *ngIf="courses(bi, pi).length">
-                      <!-- Courses Header -->
-                      <tr class="course-header" [ngStyle]="{'background': '#f8fbff'}">
-                        <th>Actions</th>
-                        <th>Code</th>
-                        <th>Course Name</th>
-                        <th>Teacher</th>
-                      </tr>
-
-                      <!-- Courses -->
-                      <ng-container formArrayName="courses">
-                        <ng-container *ngFor="let course of courses(bi, pi).controls; let ci = index" [formGroupName]="ci">
-                          <!-- Course Edit Mode -->
-                          <tr *ngIf="course.get('editing')!.value" [ngStyle]="{'background': (bi+pi+ci) % 2 === 0 ? '#f8fbff' : 'transparent'}">
-                            <td colspan="4">
-                              <div class="d-flex align-items-center">
-                                <input
-                                  formControlName="courseCode"
-                                  class="form-control form-control-sm me-2"
-                                  placeholder="Code"
-                                  style="max-width: 120px"
-                                />
-                                <select
-                                  formControlName="courseName"
-                                  class="form-control form-control-sm me-2"
-                                  style="max-width: 200px"
-                                >
-                                  <option *ngFor="let c of coursesList" [value]="c">{{ c }}</option>
-                                </select>
-                                <select
-                                  formControlName="teacher"
-                                  class="form-control form-control-sm me-2"
-                                  style="max-width: 200px"
-                                >
-                                  <option *ngFor="let t of teachersList" [value]="t">{{ t }}</option>
-                                </select>
-                                <button class="btn btn-sm" (click)="saveCourse(bi, pi, ci)" style="background-color: transparent; border: none">
-                                  <i class="fa-regular fa-check"></i>
-                                </button>
-                                <button class="btn btn-sm" (click)="removeCourse(bi, pi, ci)" style="background-color: transparent; border: none">
-                                  <i class="fa-regular fa-xmark"></i>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-
-                          <!-- Course View Mode -->
-                          <tr *ngIf="!course.get('editing')!.value" [ngStyle]="{'background': (bi+pi+ci) % 2 === 0 ? '#f8fbff' : 'transparent'}">
-                            <td>
-                              <button class="btn btn-sm" (click)="editCourse(bi, pi, ci)" style="background-color: transparent; border: none">
-                                <i class="fa-regular fa-pencil"></i>
-                              </button>
-                              <button class="btn btn-sm" (click)="removeCourse(bi, pi, ci)" style="background-color: transparent; border: none">
-                                <i class="fa-regular fa-trash"></i>
-                              </button>
-                            </td>
-                            <td style="color: #2f72f4; text-decoration: underline">{{ course.value.courseCode }}</td>
-                            <td>{{ course.value.courseName }}</td>
-                            <td>{{ course.value.teacher }}</td>
-                          </tr>
-                        </ng-container>
-                      </ng-container>
-                    </ng-container>
-                  </ng-container>
-                </ng-container>
-              </ng-container>
             </ng-container>
           </tbody>
         </table>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center w-100 custom-font mt-3">
-        <div class="text-end me-1">
-          <span>Showing {{ batches.length }} batches</span>
-        </div>
+      <!-- Pagination -->
+      <div
+        class="d-flex justify-content-end align-items-center w-100 custom-font"
+        *ngIf="batches.controls.length"
+      >
+        <div class="d-flex justify-content-between align-items-center w-100 custom-font">
+          <div class="ms-auto text-end me-1">
+            <span>
+              Showing {{ (currentPage - 1) * pageSize + 1 }} to
+              {{ (currentPage * pageSize > batches.controls.length ? batches.controls.length : currentPage * pageSize) }}
+              of {{ batches.controls.length }} entries
+            </span>
+          </div>
 
-        <!-- Pagination Controls - Add if needed -->
-        <!-- <div class="d-flex align-items-center">
-          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
-            <span><i class="fa-regular fa-angle-double-left"></i></span>
-          </button>
-          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
-            <span><i class="fa-regular fa-angle-left"></i></span>
-          </button>
-          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #2f72f4; color: #2f72f4;">1</button>
-          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
-            <span><i class="fa-regular fa-angle-right"></i></span>
-          </button>
-          <button class="btn btn-outline-secondary btn-sm mx-1" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
-            <span><i class="fa-regular fa-angle-double-right"></i></span>
-          </button>
-          <select class="form-select form-select-sm ms-2" style="width: 60px;">
-            <option selected value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div> -->
+          <div class="d-flex align-items-center">
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToFirstPage()"
+              [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-double-left"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToPreviousPage()"
+              [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-left"></i></span>
+            </button>
+
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-color: #2f72f4; color: #2f72f4;">
+              {{ currentPage }}
+            </button>
+
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToNextPage()"
+              [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-right"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToLastPage()"
+              [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-double-right"></i></span>
+            </button>
+
+            <select class="form-select form-select-sm ms-2 custom-font"
+              style="width: 60px;"
+              [(ngModel)]="pageSize"
+              [ngModelOptions]="{standalone: true}"
+              (change)="updatePagination()">
+              <option selected [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -339,23 +660,76 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header flex-column align-items-start pb-0" style="border-bottom: none">
-        <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Batch</h5>
+        <h5 class="modal-title custom-font" id="deleteConfirmationModalLabel">Delete Batch</h5>
         <hr class="modal-title-line w-100 m-0 mt-3" />
         <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Close">
           <i class="fa-solid fa-xmark-large"></i>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body custom-font">
         <p>Are you sure that you want to delete batch <span id="batchCodeToDelete"></span>?</p>
       </div>
       <div class="modal-footer justify-content-end border-0 pt-0">
-        <button type="button" class="btn btn-primary px-4" id="confirmDeleteBtn" style="background-color: #2962ff; border-radius: 6px; font-weight: 500">
+        <button type="button" class="btn btn-primary px-4 custom-font" id="confirmDeleteBtn" style="background-color: #2962ff; border-radius: 6px; font-weight: 500">
           Yes
         </button>
-        <button type="button" class="btn btn-outline-secondary px-4 ms-2" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 500">
+        <button type="button" class="btn btn-outline-secondary px-4 ms-2 custom-font" data-bs-dismiss="modal" style="border-radius: 6px; font-weight: 500">
           No
         </button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Add Student Modal -->
+<div #studentEditModal class="student-edit-popup shadow"
+     *ngIf="showStudentModal"
+     [style.top.px]="studentModalTop"
+     [style.left.px]="studentModalLeft"
+     [style.width.px]="studentModalWidth"
+     (click)="$event.stopPropagation()">
+    <div class="modal-content border-0">
+      <div class="modal-header p-2">
+        <div class="d-flex align-items-center w-100">
+          <!-- Select All Checkbox -->
+          <div class="me-2 d-flex align-items-center justify-content-center" style="min-width: 24px;">
+            <input type="checkbox" class="form-check-input"
+                   [checked]="isAllStudentsSelected()"
+                   (change)="toggleSelectAllStudents()"
+                   id="selectAllStudents">
+          </div>
+          <!-- Search Field -->
+          <input type="text" class="form-control form-control-sm"
+                 placeholder="Search"
+                 [(ngModel)]="studentSearchTerm"
+                 (input)="filterStudents()">
+
+          <!-- Close button moved inline with search -->
+          <button
+            type="button"
+            class="btn-close custom ms-2"
+            data-bs-dismiss="modal"
+            (click)="closeStudentModal(); saveStudents()"
+            aria-label="Close">
+          </button>
+        </div>
+      </div>
+      <div class="modal-body p-0">
+        <div class="students-list">
+           <div *ngIf="filteredStudents.length === 0" class="p-2 text-muted text-center">
+               No students found.
+           </div>
+           <div *ngFor="let student of filteredStudents; let i = index"
+               class="d-flex align-items-center p-2 hover-bg-light"
+               [ngClass]="{'selected-student': selectedStudents[student]}"
+               style="cursor: pointer; height: 30px;"
+               (click)="toggleStudentSelection(student)">
+               <input type="checkbox" class="form-check-input me-2"
+                   [checked]="selectedStudents[student]"
+                   tabindex="-1">
+               <span>{{ '1D' + (i+1235) }}: {{ student }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
