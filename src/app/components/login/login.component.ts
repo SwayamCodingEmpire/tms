@@ -11,7 +11,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class LoginComponent {
   rememberMe: boolean = false;
-  username: string = 'swayam';
+  // username: string = 'swayam';
+  // username: string = 'kuldeep';
   password: string = 'password';
   loginForm: FormGroup;
   constructor(private router: Router, private toastr: ToastrService){
