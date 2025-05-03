@@ -224,9 +224,6 @@
                     </button>
                   </ng-container>
 
-                  <!-- Separator bar before plus button -->
-                  <span style="color: #ccc; margin: 0 5px;">|</span>
-
                   <!-- Plus button always visible -->
                   <button
                     style="background-color: transparent; border: none; padding: 0 5px;"
@@ -332,6 +329,7 @@
                           <td style="text-align: center;">
                             <button
                               style="background-color: transparent; border: none; padding: 0;"
+                              (click)="toggleProgramDetails(i + pageSize * (currentPage - 1), pi)"
                             >
                               <i class="fa-thin fa-circle-chevron-down" style="font-size: 20px;"></i>
                             </button>
@@ -457,9 +455,6 @@
                                   >
                                     +{{ program.get('selectedStudents')?.value?.length - 1 }} more
                                   </span>
-                                  <span class="dropdown-icon">
-                                    <i class="fa-regular fa-chevron-down"></i>
-                                  </span>
                                 </span>
                                 <span *ngIf="!program.get('selectedStudents')?.value?.length" class="text-muted">
                                   Select students...
@@ -514,7 +509,7 @@
                                           style="background-color: transparent; border: none; padding: 0 5px;"
                                           (click)="removeCourse(i + pageSize * (currentPage - 1), pi, ci)"
                                         >
-                                          <i class="fa-regular fa-xmark"></i>
+                                          <i class="fa-regular fa-trash"></i>
                                         </button>
                                       </ng-container>
                                     </td>

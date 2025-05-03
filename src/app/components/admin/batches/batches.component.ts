@@ -122,6 +122,7 @@ export class BatchesComponent {
       students: new FormArray([]),
       selectedStudents: new FormControl<string[]>([]),
       editing: new FormControl(true),
+      showDetails: new FormControl(false),
       courses: new FormArray([])
     });
   }
@@ -281,18 +282,6 @@ export class BatchesComponent {
   toggleDetails(i: number) {
     const batch = this.batches.at(i) as FormGroup;
     const currentValue = batch.get('showDetails')?.value;
-
-    // If we're toggling from closed to open, reset programs and add an empty one in edit mode
-    if (!currentValue) {
-      // Clear existing programs array
-      const programsArray = batch.get('programs') as FormArray;
-      programsArray.clear();
-
-      // Add a new empty program in edit mode
-      this.addProgram(i);
-      batch.get('programEditing')?.setValue(true);
-    }
-
     batch.get('showDetails')?.setValue(!currentValue);
   }
 
@@ -498,6 +487,12 @@ export class BatchesComponent {
     this.isAddingNewBatch = false;
     this.ngOnInit();
     this.currentPage = 1;
+  }
+
+  toggleProgramDetails(batchIndex: number, programIndex: number) {
+    const program = this.programs(batchIndex).at(programIndex) as FormGroup;
+    const currentValue = program.get('showDetails')?.value;
+    program.get('showDetails')?.setValue(!currentValue);
   }
 
 }
