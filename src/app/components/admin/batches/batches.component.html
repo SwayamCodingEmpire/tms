@@ -313,7 +313,10 @@
               <tr *ngIf="batch.get('showDetails')?.value === true" style="border-top: none;">
                 <td colspan="5" style="padding: 0;">
                   <div class="p-3" style="background-color: #ffffff; border-radius: 0 0 5px 5px; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <table class="table table-borderless mb-0 custom-font">
+                   
+                    
+                    <!-- Table only shows when programs exist -->
+                    <table class="table table-borderless mb-0 custom-font" *ngIf="programs(i + pageSize * (currentPage - 1)).controls.length > 0">
                       <thead>
                         <tr style="background-color: #ffffff;">
                           <th style="width: 40px; background: transparent;"></th>
@@ -468,7 +471,10 @@
                         <tr *ngIf="program.get('showDetails')?.value === true" style="border-top: none;">
                           <td colspan="5" style="padding: 0;">
                             <div class="p-3" style="background-color: #ffffff; border-radius: 0 0 5px 5px; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                              <table class="table table-borderless mb-0 custom-font">
+                           
+                              
+                              <!-- Table only shows when courses exist -->
+                              <table class="table table-borderless mb-0 custom-font" *ngIf="courses(i + pageSize * (currentPage - 1), pi).controls.length > 0">
                                 <thead>
                                   <tr style="background-color: #f8fbff;">
                                     <th style="width: 120px;">Actions</th>
@@ -528,7 +534,7 @@
                                           type="text"
                                           formControlName="courseCode"
                                           class="form-control custom-font"
-                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 100px; background-color: #f8fbff;"
+                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 100px; background-color: #f8fbff; padding-top: 0; padding-bottom: 0; vertical-align: middle; display: inline-block;"
                                           placeholder="Enter Code"
                                         />
                                       </ng-container>
@@ -545,7 +551,7 @@
                                         <select
                                           formControlName="courseName"
                                           class="form-control custom-font"
-                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff;"
+                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff; padding-top: 0; padding-bottom: 0; vertical-align: middle; display: inline-block;"
                                         >
                                           <option *ngFor="let c of coursesList" [value]="c">{{ c }}</option>
                                         </select>
@@ -563,7 +569,7 @@
                                         <select
                                           formControlName="teacher"
                                           class="form-control custom-font"
-                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff;"
+                                          style="height: 25px; font-size: inherit; border-radius: 0; width: 150px; background-color: #f8fbff; padding-top: 0; padding-bottom: 0; vertical-align: middle; display: inline-block;"
                                         >
                                           <option *ngFor="let t of teachersList" [value]="t">{{ t }}</option>
                                         </select>

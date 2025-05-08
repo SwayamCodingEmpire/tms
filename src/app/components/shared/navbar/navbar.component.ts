@@ -23,15 +23,13 @@ export class NavbarComponent {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       // Check if current route is programs
-      if (event.url === '/programs') {
+      if (event.url === '/admin/programs') {
         this.option = true;
-      } else if (event.url === '/courses') {
+      } else if (event.url === '/admin/courses') {
         this.option = false;
       }
     });
   }
-
-
 
   ngOnInit(): void {
     const storedUser = localStorage.getItem('user');
@@ -50,9 +48,9 @@ export class NavbarComponent {
     }
 
     // Check initial route
-    if (this.router.url === '/programs') {
+    if (this.router.url === '/admin/programs') {
       this.option = true;
-    } else if (this.router.url === '/courses') {
+    } else if (this.router.url === '/admin/courses') {
       this.option = false;
     }
   }
@@ -75,15 +73,12 @@ export class NavbarComponent {
   changePassword() {
     console.log('Change Password Clicked');
   }
+
   signOut() {
-    // Clear the session or any login-related data
-    localStorage.removeItem('loggedIn'); // Remove login status
-    localStorage.removeItem('authToken'); // If you're using a token (optional)
-
-    // Navigate to the login page
-    this.router.navigate(['/login']);
+    console.log('Sign Out Clicked');
+    localStorage.clear();
+    window.location.reload();
   }
-
 
   isCoursesDropdownOpen = false;
 
@@ -94,6 +89,10 @@ toggleCoursesDropdown() {
 handleOption(isProgram: boolean) {
   this.option = isProgram;             // Set the dropdown label
   this.isCoursesDropdownOpen = false; // Close the dropdown
+}
+
+isRouteActive(route: string): boolean {
+  return this.router.url.includes(route);
 }
 
 }

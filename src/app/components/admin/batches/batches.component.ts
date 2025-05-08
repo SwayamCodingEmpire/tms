@@ -352,7 +352,11 @@ export class BatchesComponent {
   }
   saveProgram(bi: number, pi: number) { this.programs(bi).at(pi).get('editing')!.setValue(false); }
   editProgram(bi: number, pi: number) { this.programs(bi).at(pi).get('editing')!.setValue(true); }
-  removeProgram(bi: number, pi: number) { this.programs(bi).removeAt(pi); }
+  removeProgram(bi: number, pi: number) { 
+    console.log(`Removing program at batch index: ${bi}, program index: ${pi}`); 
+    this.programs(bi).removeAt(pi); 
+    console.log(`Program removed. Programs count: ${this.programs(bi).length}`);
+  }
   onStudentSelect(ev: Event, bi: number, pi: number) {
     const fa = this.programs(bi).at(pi).get('students') as FormArray;
     fa.clear();
@@ -379,7 +383,11 @@ export class BatchesComponent {
 
   saveCourse(bi: number, pi: number, ci: number) { this.courses(bi,pi).at(ci).get('editing')!.setValue(false); }
   editCourse(bi: number, pi: number, ci: number) { this.courses(bi,pi).at(ci).get('editing')!.setValue(true); }
-  removeCourse(bi: number, pi: number, ci: number) { this.courses(bi,pi).removeAt(ci); }
+  removeCourse(bi: number, pi: number, ci: number) { 
+    console.log(`Removing course at batch index: ${bi}, program index: ${pi}, course index: ${ci}`);
+    this.courses(bi,pi).removeAt(ci); 
+    console.log(`Course removed. Courses count: ${this.courses(bi, pi).length}`);
+  }
 
   /** Pagination methods **/
   updateTotalPages() {

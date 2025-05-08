@@ -41,15 +41,17 @@
 
 
 </nav>
+
 <!-- Navigation Menu -->
 <div style="background: #2c3a52; padding: 3px;" (click)="closeDropdown($event)">
 <ul class="nav nav-pills px-3" style="border-radius: 5px; padding: 3px; margin-bottom: 0;">
   <!-- Courses Dropdown -->
   <li class="nav-item dropdown" [class.show]="isCoursesDropdownOpen">
-    <a class="nav-link text-white d-flex align-items-center justify-content-between"
+    <a class="nav-link d-flex align-items-center justify-content-between"
+       [class.active]="option ? isRouteActive('/admin/programs') : isRouteActive('/admin/courses')"
        href="javascript:void(0)"
        (click)="toggleCoursesDropdown()"
-       style="padding: 3px 15px; background-color: #3e5172; font-weight: 500; border-radius: 5px;">
+       style="padding: 3px 15px; color: white; border-radius: 5px;">
 
       <!-- Dynamic label -->
       <span class="me-4">
@@ -59,46 +61,54 @@
 
       <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: white;"></i>
     </a>
-
     <ul class="dropdown-menu border-0 shadow-lg mt-2" [class.show]="isCoursesDropdownOpen"
         style="position: absolute; top: 100%; left: 0; right: 0; background: #2e3c54; border-radius: 5px; min-width: 220px;
-       box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3); padding: 5px;">
+     box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3); padding: 5px;">
+
 
       <li>
-        <a class="dropdown-item text-white d-flex align-items-center py-2"
-           href="javascript:void(0)"
-           [routerLink]="'/admin/courses'"
-           (click)="handleOption(false)">
-           <i class="fa-light fa-file me-2"></i> Courses
+        <a class="dropdown-item text-white d-flex align-items-center py-2" [routerLink]="'/admin/courses'" (click)="toggleCoursesDropdown()" href="javascript:void(0)"
+            style="transition: background 0.2s ease-in-out;">
+            <i class="fa-light fa-file me-2"></i> Courses
         </a>
-      </li>
-
-      <li>
-        <a class="dropdown-item text-white d-flex align-items-center py-2"
-           href="javascript:void(0)"
-           [routerLink]="'/admin/programs'"
-           (click)="handleOption(true)">
-           <i class="fa-light fa-square-list me-2"></i> Programs
+    </li>
+    <li>
+        <a class="dropdown-item text-white d-flex align-items-center py-2" href="javascript:void(0)" (click)="toggleCoursesDropdown()" [routerLink]="'/admin/programs'"
+            style="transition: background 0.2s ease-in-out;">
+            <i class="fa-light fa-square-list me-2"></i> Programs
         </a>
-      </li>
+    </li>
     </ul>
-  </li>
 
+
+
+  </li>
 
   <!-- Other Tabs -->
   <li class="nav-item">
-    <a class="nav-link text-light" href="#" style="padding: 3px 25px; font-weight: 300;"
-    [routerLink]="['/admin/batches']">
+    <a class="nav-link"
+       [routerLink]="['/admin/batches']"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact: true}"
+       style="padding: 3px 25px; font-weight: 300; color: white;">
       <i class="fa-regular fa-user-group me-2"></i> Batch
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link text-light" href="#" style="padding: 3px 25px; font-weight: 300;">
+    <a class="nav-link"
+       [routerLink]="['/admin/teachers']"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact: true}"
+       style="padding: 3px 25px; font-weight: 300; color: white;">
       <i class="fa-light fa-user me-2"></i> Teachers
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link text-light" href="#" style="padding: 3px 25px; font-weight: 300;">
+    <a class="nav-link"
+       [routerLink]="['/admin/students']"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact: true}"
+       style="padding: 3px 25px; font-weight: 300; color: white;">
       <i class="fa-light fa-user-graduate me-2"></i> Students
     </a>
   </li>
@@ -112,13 +122,25 @@
 body, nav, .nav, .nav-item, .nav-link, .dropdown-item, .btn, span, a {
     font-family: 'Montserrat', sans-serif !important;
     font-size: 14px;
-
 }
-
-
 
 /* Hide Dropdown Arrow */
 #userDropdown::after {
     display: none !important;
+}
+
+/* Active state for navigation */
+.nav-item .nav-link.active {
+    background-color: #3e5172 !important;
+    border-radius: 5px;
+    font-weight: 500 !important;
+    color: white !important;
+}
+
+/* Hover state for non-active navigation items */
+.nav-item .nav-link:not(.active):hover {
+    background-color: rgba(62, 81, 114, 0.7) !important;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
 }
 </style>
